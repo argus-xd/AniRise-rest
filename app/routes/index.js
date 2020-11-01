@@ -13,6 +13,7 @@ const {
     apiGetLinks,
     ApiGetAnimeById,
     apiFranchise,
+    apiShkiGetById,
     apiList,
     apiListTop,
     kinoposk
@@ -40,11 +41,7 @@ module.exports = function (app, db) {
         res.send("die");
       }
     });*/
-    app.get("/", (request, response) => {
-        response.render("home", {
-            name: "John"
-        });
-    });
+
 
     app.get(
         "/get_link/:link/:id/:episode/:season",
@@ -54,14 +51,17 @@ module.exports = function (app, db) {
     app.get("/list/:link/:id/:count/:season", listController);
     app.get("/kinoposk/:kinoposkID", kinoposk);
 
+    /*Kodik api*/
     app.get("/api-list/", apiList);
     app.get("/api-list-top", apiListTop);
     app.get("/api-search/:name", apiSearch);
     app.get("/api-search-id/:shikimori_id", apiSearchId);
     app.get("/api-serial-id/:serial_id", ApiGetAnimeById);
     app.get("/api-get-url/:serial_id/:season/:episode", apiGetLinks);
+    /*Shiki api*/
     app.get("/api-franchise/:serial_id", apiFranchise);
-
+    app.get("/api-shiki-id/:id", apiShkiGetById);
+    /*Search*/
     app.get("/api-search-link/:name", searchLink);
     app.get("/api-db-update/", serialsAdd);
 };

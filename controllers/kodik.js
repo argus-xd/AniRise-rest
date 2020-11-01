@@ -347,6 +347,18 @@ const apiFranchise = async function (request, res, next) {
         res.end(bodyNodes)
     });
 };
+const apiShkiGetById = async function (request, res, next) {
+    let id = request.params.id;
+    const url = `https://shikimori.one/api/animes/${id}/`;
+    res.set({"content-type": "application/json; charset=utf-8"});
+
+    httpRequest.get(url, async (error, response, body) => {
+        body = JSON.parse(body);
+
+        let bodyNodes = JSON.stringify(body);
+        res.end(bodyNodes)
+    });
+};
 const apiList = function (request, res, next) {
     const url = `https://kodikapi.com/list?token=${token}&types=anime-serial,anime&with_episodes=true&with_material_data=true&limit=100`;
     console.log(url);
@@ -435,6 +447,7 @@ module.exports = {
     apiGetLinks,
     apiList,
     apiFranchise,
+    apiShkiGetById,
     apiListTop,
     ApiGetAnimeById,
     getLinkController,
