@@ -34,7 +34,9 @@ const getLinks = async (id, episode, season) => {
     console.log(idSeria);
     console.log(hash);
 
-    let get = await fetch("http://kodik.cc/get-vid", {
+
+
+    let get = await fetch("http://kodik.cc/video-information", {
         headers: {
             "accept": "application/json, text/javascript, *!/!*; q=0.01",
             "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,cy;q=0.6,und;q=0.5,sr;q=0.4",
@@ -80,7 +82,7 @@ let link = json["results"][0]["seasons"]
     console.log(idSeria);
     console.log(hash);*/
 
-    let get = await fetch("http://aniqit.com/get-vid", {
+    let get = await fetch("http://kodik.cc/video-information", {
         headers: {
             "accept": "application/json, text/javascript, *!/!*; q=0.01",
             "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,cy;q=0.6,und;q=0.5,sr;q=0.4",
