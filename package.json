@@ -34,10 +34,10 @@
     "pug": "^3.0.0",
     "request": "^2.88.0",
     "sqlite3": "^5.0.0",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
     "prettier": "^1.19.1"
   }
 }
