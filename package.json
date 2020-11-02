@@ -6,7 +6,7 @@
   "license": "ISC",
   "scripts": {
     "start": "node -r dotenv/config ./index.js",
-    "dev": "nodemon ./index.js"
+    "start:watch": "nodemon ./index.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
