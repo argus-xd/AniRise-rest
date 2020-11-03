@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
+const router = require("./router");
+
 const { restPort } = require("./config");
 
 const app = express();
@@ -20,8 +22,7 @@ app.use(function(req, res, next) {
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-require("./router")(app);
+app.use(router);
 
 app.engine(
   ".hbs",
