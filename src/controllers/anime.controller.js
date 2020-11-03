@@ -2,37 +2,42 @@ const kodikClient = require("../clients/kodik");
 const animeDb = require("../services/anime-db");
 const get = require("lodash.get");
 
-const pageLimit = limit => {
-  limit = limit || 100;
+const rangeNumber = (limit, from, to) => {
+  limit = Number(limit) || to;
 
-  if (limit < 1) return 1;
-  if (limit > 100) return 100;
+  if (limit < from) return from;
+  if (limit > to) return to;
 
   return limit;
 };
 
 const availableSorts = direction => ({
-  date: (a, b) => false,
+  date: (a, b) => {
+    const aDate = new Date(a.updated_at);
+    const bDate = new Date(b.updated_at);
+
+    if (direction === "asc") {
+      return aDate < bDate ? -1 : 1;
+    }
+
+    return aDate < bDate ? 1 : -1;
+  },
   rating: (a, b) => {
     const aRating = get(a, "material_data.shikimori_rating", 0);
     const bRating = get(b, "material_data.shikimori_rating", 0);
 
     if (direction === "asc") {
       return aRating - bRating;
-    } else {
-      return bRating - aRating;
     }
+
+    return bRating - aRating;
   }
 });
 
 const animeList = ({ query }) => {
   const sortDirection = query["sort-direction"] || "desc";
-  const selectedSort =
-    availableSorts(sortDirection)[query["sort-field"]] ||
-    availableSorts(sortDirection).date;
-  const limit = pageLimit(query["limit"]);
-
-  console.log(sortDirection, limit);
+  const selectedSort = availableSorts(sortDirection)[query["sort-field"]];
+  const limit = rangeNumber(query["limit"], 1, 100);
 
   return animeDb
     .animeList()
@@ -48,6 +53,7 @@ const animeSearch = ({ query }) => {
 const listFormatMapper = anime => ({
   title: anime.title,
   shikimoriId: anime.shikimori_id,
+  updated_at: anime.updated_at,
   rating: get(anime, "material_data.shikimori_rating", 0),
   poster: get(anime, "material_data.poster_url", "")
 });
