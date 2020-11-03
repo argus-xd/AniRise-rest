@@ -8,6 +8,8 @@ const timeElapsedLabels = {
 
 let cachedAnime = [];
 
+const animeList = () => cachedAnime;
+
 const animeSearch = searchTerm => {
   console.time(timeElapsedLabels.search);
   const result = cachedAnime.filter(anime => {
@@ -60,5 +62,6 @@ setInterval(() => updateCache(), animeDb.cacheUpdateIntervalMinutes * 60000);
 
 module.exports = {
   updateCache,
+  animeList,
   animeSearch
 };
