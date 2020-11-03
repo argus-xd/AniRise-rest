@@ -6,12 +6,12 @@ const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./router");
 const oldRouter = require("./router.old");
-const animeCache = require("./services/anime-cache");
+const animeDb = require("./services/anime-db");
 
-const { restPort, cacheUpdateIntervalMinutes } = require("./config");
+const { restPort } = require("./config");
 
 (async () => {
-  await animeCache.init(cacheUpdateIntervalMinutes);
+  await animeDb.updateCache();
 
   const app = express();
 
