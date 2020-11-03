@@ -4,9 +4,9 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
+const { restPort } = require("./src/config");
 
 const app = express();
-const port = 3000;
 
 app.use(morgan("tiny"));
 app.use(cors());
@@ -34,6 +34,6 @@ app.engine(
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
-app.listen(port, () => {
-  console.log("We are live on " + port);
+app.listen(restPort, () => {
+  console.log("We are live on " + restPort);
 });
