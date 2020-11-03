@@ -24,7 +24,4 @@ router.get(
 router.get("/api-franchise/:serial_id", kodikController.apiFranchise);
 router.get("/api-shiki-id/:id", kodikController.apiShkiGetById);
 
-router.get("/api-search-link/:name", searchController.searchLink);
-router.get("/api-db-update/", searchController.serialsAdd);
-
 module.exports = router;
