@@ -372,7 +372,7 @@ const apiList = function(request, res, next) {
   httpRequest.get(url, (error, response, body) => res.end(body));
 };
 const apiListTop = function(request, res, next) {
-  const url = `https://kodikapi.com/list?token=${token}&with_material_data=true&status=ongoing&shikimori_rating=7-10&limit=100`;
+  const url = `https://kodikapi.com/list?token=${token}&with_material_data=true&status=ongoing&sort=shikimori_rating&limit=100`;
   console.log(url);
   res.set({ "content-type": "application/json; charset=utf-8" });
   httpRequest.get(url, (error, response, body) => res.end(body));
