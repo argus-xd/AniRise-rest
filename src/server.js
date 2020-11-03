@@ -8,10 +8,10 @@ const router = require("./router");
 const oldRouter = require("./router.old");
 const animeCache = require("./services/anime-cache");
 
-const { restPort } = require("./config");
+const { restPort, cacheUpdateIntervalMinutes } = require("./config");
 
 (async () => {
-  await animeCache.init();
+  await animeCache.init(cacheUpdateIntervalMinutes);
 
   const app = express();
 

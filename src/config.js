@@ -6,5 +6,6 @@ module.exports = {
     }
   },
   serviceHost: "localhost",
-  restPort: process.env.REST_PORT || 8080
+  restPort: process.env.REST_PORT || 8080,
+  cacheUpdateIntervalMinutes: process.env.CACHE_UPDATE_INTERVAL_MINUTES || 60
 };
