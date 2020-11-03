@@ -10,6 +10,4 @@ routes.forEach(([path, handler, method = "get"]) => {
   });
 });
 
-router.get("/anime/", animeController.animeList);
-
 module.exports = router;
