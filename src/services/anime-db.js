@@ -1,26 +1,41 @@
 const axios = require("axios");
 const { animeDb } = require("../config");
+const miniSearch = require("minisearch");
 
 const timeElapsedLabels = {
   search: "Search time",
   cacheUpdate: "Cache update elapsed time"
 };
 
+const searchEngine = new miniSearch({
+  fields: ["title", "title_orig"],
+  storeFields: ["shikimori_id", "title"]
+});
+
 let cachedAnime = [];
+const searchResultsLimit = 30;
 
 const animeList = () => cachedAnime;
 
 const animeSearch = searchTerm => {
   console.time(timeElapsedLabels.search);
-  const result = cachedAnime.filter(anime => {
-    const titleMatched = anime.title.indexOf(searchTerm) >= 0;
-    const titleOrigMatched = anime.title_orig.indexOf(searchTerm) >= 0;
 
-    return titleMatched || titleOrigMatched;
-  });
+  const result = [];
+  const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
 
-  console.log("Search term: " + searchTerm);
-  console.log("Results found: " + result.length);
+  for (const searchResult of searchResults) {
+    const foundAnime = cachedAnime.find(
+      anime => anime.shikimori_id === searchResult.shikimori_id
+    );
+
+    if (foundAnime) {
+      result.push(foundAnime);
+      if (result.length >= searchResultsLimit) {
+        break;
+      }
+    }
+  }
+
   console.timeEnd(timeElapsedLabels.search);
 
   return result;
@@ -45,6 +60,7 @@ const updateCache = async () => {
     });
   }
 
+  searchEngine.addAll(downloadedAnime);
   cachedAnime = downloadedAnime;
 
   console.log("Anime in cache: " + cachedAnime.length);
