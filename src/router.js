@@ -4,7 +4,7 @@ const { animeController } = require("./controllers");
 
 const routes = [
   ["/anime/", animeController.animeList],
-  ["/anime/search/:term", animeController.animeSearch]
+  ["/anime/search", animeController.animeSearch]
 ];
 
 routes.forEach(([path, handler, method = "get"]) => {
