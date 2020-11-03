@@ -1,7 +1,7 @@
 const kodikClient = require("../clients/kodik");
 
 const animeList = () => {
-  return "anime-list-method";
+  return kodikClient.getAnimeList();
 };
 
 module.exports = {
