@@ -5,30 +5,26 @@ const noteRoutes = require("./note_routes");
 
 // Требующиеся модули контроллеров.
 const {
-    searchController,
-    listController,
-    getLinkController,
-    apiSearch,
-    apiSearchId,
-    apiGetLinks,
-    ApiGetAnimeById,
-    apiFranchise,
-    apiShkiGetById,
-    apiList,
-    apiListTop,
-    kinoposk
+  searchController,
+  listController,
+  getLinkController,
+  apiSearch,
+  apiSearchId,
+  apiGetLinks,
+  ApiGetAnimeById,
+  apiFranchise,
+  apiShkiGetById,
+  apiList,
+  apiListTop,
+  kinoposk
 } = require("../../controllers/kodik");
 
-const {
-    searchLink,
-    serialsAdd,
-} = require("../../controllers/search");
+const { searchLink, serialsAdd } = require("../../controllers/search");
 
+module.exports = function(app, db) {
+  noteRoutes(app, db);
 
-module.exports = function (app, db) {
-    noteRoutes(app, db);
-
-    /*  app.use(function timeLog(req, res, next) {
+  /*  app.use(function timeLog(req, res, next) {
       let time = new Date();
       let timeEp =
         time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
@@ -42,26 +38,25 @@ module.exports = function (app, db) {
       }
     });*/
 
+  app.get(
+    "/get_link/:link/:id/:episode/:season",
+    asyncHandler(getLinkController)
+  );
+  app.get("/search/", searchController);
+  app.get("/list/:link/:id/:count/:season", listController);
+  app.get("/kinoposk/:kinoposkID", kinoposk);
 
-    app.get(
-        "/get_link/:link/:id/:episode/:season",
-        asyncHandler(getLinkController)
-    );
-    app.get("/search/", searchController);
-    app.get("/list/:link/:id/:count/:season", listController);
-    app.get("/kinoposk/:kinoposkID", kinoposk);
-
-    /*Kodik api*/
-    app.get("/api-list/", apiList);
-    app.get("/api-list-top", apiListTop);
-    app.get("/api-search/:name", apiSearch);
-    app.get("/api-search-id/:shikimori_id", apiSearchId);
-    app.get("/api-serial-id/:serial_id", ApiGetAnimeById);
-    app.get("/api-get-url/:serial_id/:season/:episode", apiGetLinks);
-    /*Shiki api*/
-    app.get("/api-franchise/:serial_id", apiFranchise);
-    app.get("/api-shiki-id/:id", apiShkiGetById);
-    /*Search*/
-    app.get("/api-search-link/:name", searchLink);
-    app.get("/api-db-update/", serialsAdd);
+  /*Kodik api*/
+  app.get("/api-list/", apiList);
+  app.get("/api-list-top", apiListTop);
+  app.get("/api-search/:name", apiSearch);
+  app.get("/api-search-id/:shikimori_id", apiSearchId);
+  app.get("/api-serial-id/:serial_id", ApiGetAnimeById);
+  app.get("/api-get-url/:serial_id/:season/:episode", apiGetLinks);
+  /*Shiki api*/
+  app.get("/api-franchise/:serial_id", apiFranchise);
+  app.get("/api-shiki-id/:id", apiShkiGetById);
+  /*Search*/
+  app.get("/api-search-link/:name", searchLink);
+  app.get("/api-db-update/", serialsAdd);
 };
