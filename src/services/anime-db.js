@@ -54,7 +54,7 @@ const updateCache = async () => {
         found => found.shikimori_id === anime.shikimori_id
       );
 
-      if (index !== foundIndex) {
+      if (index === foundIndex) {
         downloadedAnime.push(anime);
       }
     });
