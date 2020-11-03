@@ -42,7 +42,11 @@ module.exports = function (app, db) {
       }
     });*/
 
-
+    app.get("/", (request, response) => {
+        response.render("home", {
+            name: "John"
+        });
+    });
     app.get(
         "/get_link/:link/:id/:episode/:season",
         asyncHandler(getLinkController)
