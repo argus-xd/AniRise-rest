@@ -1,9 +1,11 @@
 const { url, authToken } = require("../config").clients.kodik;
-const axios = require("axios");
+const client = require("axios").create({
+  baseURL: url
+});
 
 const getAnimeList = (limit = 100) => {
-  return axios
-    .get(url + "/list", {
+  return client
+    .get("/list", {
       params: {
         token: authToken,
         types: "anime-serial,anime",
