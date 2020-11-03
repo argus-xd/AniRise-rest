@@ -5,8 +5,8 @@
   "author": "Argus",
   "license": "ISC",
   "scripts": {
-    "start": "node -r dotenv/config ./index.js",
-    "start:watch": "nodemon -r dotenv/config  ./index.js"
+    "start": "node -r dotenv/config ./src/server.js",
+    "start:watch": "nodemon -r dotenv/config  ./src/server.js"
   },
   "dependencies": {
     "axios": "^0.19.2",

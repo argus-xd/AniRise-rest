@@ -1,9 +1,5 @@
-// routes/index.js
-
 const asyncHandler = require("express-async-handler");
-const noteRoutes = require("./note_routes");
 
-// Требующиеся модули контроллеров.
 const {
   searchController,
   listController,
@@ -17,27 +13,11 @@ const {
   apiList,
   apiListTop,
   kinoposk
-} = require("../../controllers/kodik");
+} = require("./controllers/kodik");
 
-const { searchLink, serialsAdd } = require("../../controllers/search");
+const { searchLink, serialsAdd } = require("./controllers/search");
 
-module.exports = function(app, db) {
-  noteRoutes(app, db);
-
-  /*  app.use(function timeLog(req, res, next) {
-      let time = new Date();
-      let timeEp =
-        time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-
-      console.log("Time: ", timeEp);
-
-      if (req["headers"]["origin"] != "http://obovse.ru") next();
-      else {
-        console.log("telek");
-        res.send("die");
-      }
-    });*/
-
+module.exports = function(app) {
   app.get(
     "/get_link/:link/:id/:episode/:season",
     asyncHandler(getLinkController)
