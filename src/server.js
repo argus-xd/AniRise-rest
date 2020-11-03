@@ -5,6 +5,7 @@ const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./router");
+const oldRouter = require("./router.old");
 
 const { restPort } = require("./config");
 
@@ -22,7 +23,7 @@ app.use(function(req, res, next) {
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(router);
+app.use(router, oldRouter);
 
 app.engine(
   ".hbs",
