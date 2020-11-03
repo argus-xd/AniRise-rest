@@ -14,4 +14,6 @@ routes.forEach(([path, handler, method = "get"]) => {
   });
 });
 
+router.get("/favicon.ico", (req, res) => res.status(204));
+
 module.exports = router;
