@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { animeDb } = require("../config");
 const miniSearch = require("minisearch");
+const animeSorter = require("../utils/anime-sorter");
 
 const timeElapsedLabels = {
   search: "Search time",
@@ -47,7 +48,9 @@ const updateCache = async () => {
   const downloadedAnime = [];
 
   for (const dumpName of animeDb.dumpsList) {
-    const dumpAnime = await downloadDump(dumpName);
+    const dumpAnime = (await downloadDump(dumpName)).sort(
+      animeSorter.select("date", "desc")
+    );
 
     dumpAnime.forEach((anime, index) => {
       const foundIndex = dumpAnime.findIndex(
