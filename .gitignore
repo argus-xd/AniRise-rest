@@ -5,6 +5,8 @@ node_modules
 .env*
 
 # Editor directories and files
+debug.log
+.history
 .idea
 .vscode
 *.suo
