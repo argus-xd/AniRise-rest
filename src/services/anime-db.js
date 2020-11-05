@@ -63,6 +63,7 @@ const updateCache = async () => {
     });
   }
 
+  searchEngine.removeAll();
   searchEngine.addAll(downloadedAnime);
   cachedAnime = downloadedAnime;
 
