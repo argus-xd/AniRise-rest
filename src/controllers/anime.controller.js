@@ -1,7 +1,7 @@
 const animeDb = require("../services/anime-db");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
-const get = require("lodash.get");
+const animeMapper = require("../utils/anime-mapper");
 
 const animeList = ({ query }) => {
   const sortDirection = query["sort-direction"] || "desc";
@@ -12,20 +12,12 @@ const animeList = ({ query }) => {
     .animeList()
     .sort(selectedSort)
     .slice(0, limit)
-    .map(listFormatMapper);
+    .map(animeMapper.list);
 };
 
 const animeSearch = ({ query }) => {
-  return animeDb.animeSearch(query["title"] || "").map(listFormatMapper);
+  return animeDb.animeSearch(query["title"] || "").map(animeMapper.list);
 };
-
-const listFormatMapper = anime => ({
-  title: anime.title,
-  shikimoriId: anime.shikimori_id,
-  updated_at: anime.updated_at,
-  rating: get(anime, "material_data.shikimori_rating", 0),
-  poster: get(anime, "material_data.poster_url", "")
-});
 
 module.exports = {
   animeList,
