@@ -4,6 +4,7 @@ const { animeController } = require("./controllers");
 
 const routes = [
   ["/anime/", animeController.animeList],
+  ["/anime/:id(\\d+)$", animeController.animeById],
   ["/anime/search", animeController.animeSearch]
 ];
 
