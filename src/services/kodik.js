@@ -23,12 +23,15 @@ const getAnimeById = async (id, episode = 1, translation) => {
   const foundEpisode = animeInfo.episodes.find(ep => ep.number === episode);
   if (!foundEpisode) throw "No episode found";
 
+  const totalEpisodes =
+    animeInfo.episodes[animeInfo.episodes.length - 1].number;
   const playList = await getPlaylistByEpisodeLink(foundEpisode.link).catch();
 
   return {
     ...animeMapper.view(animeInfo),
-    episode: {
+    episodes: {
       current: episode,
+      total: totalEpisodes,
       playList
     },
     translations: {
