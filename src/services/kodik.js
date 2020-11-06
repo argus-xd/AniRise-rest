@@ -15,8 +15,9 @@ const getAnimeById = async (id, episode = 1, translation) => {
 
   if (!translations.length) throw "No anime found";
 
-  translation =
-    translations.find(tr => tr.id === translation) || translations[0].id;
+  translation = (
+    translations.find(tr => tr.id === translation) || translations[0]
+  ).id;
   const animeInfo = await getAnimeByTranslatorId(translation);
   if (!animeInfo) throw "No anime found";
 
