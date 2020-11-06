@@ -9,7 +9,8 @@ module.exports = {
   clients: {
     kodik: {
       authToken: process.env.KODIK_AUTH_TOKEN,
-      url: "https://kodikapi.com"
+      url: "https://kodikapi.com",
+      videoUrl: "http://kodik.cc/video-information"
     }
   },
   serviceHost: "localhost",
