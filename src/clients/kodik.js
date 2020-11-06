@@ -1,11 +1,11 @@
-const { url, videoUrl, authToken } = require("../config").clients.kodik;
+const config = require("../config").clients.kodik;
 const client = require("axios").create({
-  baseURL: url
+  baseURL: config.url
 });
 
 const simpleGetRequest = (endpoint, params = {}) => {
   return client
-    .get(endpoint, { params: { token: authToken, ...params } })
+    .get(endpoint, { params: { token: config.authToken, ...params } })
     .then(({ data }) => data.results)
     .catch(() => []);
 };
@@ -13,24 +13,30 @@ const simpleGetRequest = (endpoint, params = {}) => {
 const list = params => simpleGetRequest("/list", params);
 const search = params => simpleGetRequest("/search", params);
 
-const videoInfo = (id, type, hash) => {
+const videoPlaylist = (id, type, hash) => {
   return client
     .post(
-      videoUrl,
+      config.videoUrl,
       new URLSearchParams({
         ref: "",
-        ref_sign:
-          "208d2a75f78d8afe7a1c73c2d97fd3ce07534666ab4405369f4f8705a9741144",
+        ref_sign: config.refSign,
         type,
         id,
-        hash
+        hash,
+        hash2: config.hash2
       }).toString()
     )
-    .then(({ data }) => data);
+    .then(({ data }) =>
+      Object.entries(data.links).map(([size, [{ src, type }]]) => ({
+        src: "https:" + src.replace(":hls:manifest.m3u8", ""),
+        size,
+        type
+      }))
+    );
 };
 
 module.exports = {
   list,
   search,
-  videoInfo
+  videoPlaylist
 };

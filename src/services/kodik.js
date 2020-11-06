@@ -1,4 +1,5 @@
 const kodikApi = require("../clients/kodik");
+const animeMapper = require("../utils/anime-mapper");
 
 const getAnimeList = (limit = 100) => {
   return kodikApi.list({
@@ -7,6 +8,34 @@ const getAnimeList = (limit = 100) => {
     with_material_data: "true",
     limit
   });
+};
+
+const getAnimeById = async (id, episode = 1, translation) => {
+  const translations = await translationsListByShikimoriId(id);
+
+  if (!translations.length) throw "No anime found";
+
+  translation =
+    translations.find(tr => tr.id === translation) || translations[0].id;
+  const animeInfo = await getAnimeByTranslatorId(translation);
+  if (!animeInfo) throw "No anime found";
+
+  const foundEpisode = animeInfo.episodes.find(ep => ep.number === episode);
+  if (!foundEpisode) throw "No episode found";
+
+  const playList = await getPlaylistByEpisodeLink(foundEpisode.link).catch();
+
+  return {
+    ...animeMapper.view(animeInfo),
+    episode: {
+      current: episode,
+      playList
+    },
+    translations: {
+      current: translation,
+      list: translations
+    }
+  };
 };
 
 const getAnimeByTranslatorId = async translatorId => {
@@ -41,20 +70,25 @@ const translationsListByShikimoriId = async id => {
 
 const getEpisodesFromAnime = (anime, seasons) => {
   if (anime.type === "anime") {
-    return [{ episode: 1, link: anime.link }];
+    return [{ number: 1, link: anime.link }];
   }
 
   const lastSeason = anime.last_season || 1;
   const episodes = seasons[lastSeason].episodes;
 
   return Object.entries(episodes).map(([episode, link]) => ({
-    episode,
+    number: Number(episode),
     link
   }));
 };
 
+const getPlaylistByEpisodeLink = link => {
+  const [, type, id, hash] = link.split("/").filter(x => x);
+
+  return kodikApi.videoPlaylist(id, type, hash);
+};
+
 module.exports = {
-  getAnimeList,
-  getAnimeByTranslatorId,
-  translationsListByShikimoriId
+  getAnimeById,
+  getAnimeList
 };

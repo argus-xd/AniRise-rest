@@ -5,36 +5,15 @@ const animeSorter = require("../utils/anime-sorter");
 const animeMapper = require("../utils/anime-mapper");
 
 const animeById = async ({ params, query }, response) => {
-  const translation = query.translation;
   const episode = Number(query.episode) || 1;
+  const translation = query.translation;
 
-  const translations = await kodikService.translationsListByShikimoriId(
-    params.id
-  );
-
-  if (!translations.length) {
+  try {
+    return await kodikService.getAnimeById(params.id, episode, translation);
+  } catch (error) {
     response.status(404);
-    return { error: "No anime found" };
+    return { error };
   }
-
-  const selectedTranslation =
-    translations.find(tr => tr.id === translation) || translations[0].id;
-  const animeInfo = await kodikService.getAnimeByTranslatorId(
-    selectedTranslation
-  );
-
-  if (!animeInfo) {
-    response.status(404);
-    return { error: "No anime found" };
-  }
-
-  return {
-    ...animeMapper.view(animeInfo),
-    translations: {
-      current: selectedTranslation,
-      list: translations
-    }
-  };
 };
 
 const animeList = ({ query }) => {
