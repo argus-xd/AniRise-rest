@@ -1,4 +1,4 @@
-const kodikApi = require("../clients/kodik");
+const kodikService = require("../services/kodik");
 const animeDb = require("../services/anime-db");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
@@ -8,7 +8,9 @@ const animeById = async ({ params, query }, response) => {
   const translation = query.translation;
   const episode = Number(query.episode) || 1;
 
-  const translations = await kodikApi.translationsListByShikimoriId(params.id);
+  const translations = await kodikService.translationsListByShikimoriId(
+    params.id
+  );
 
   if (!translations.length) {
     response.status(404);
@@ -17,7 +19,9 @@ const animeById = async ({ params, query }, response) => {
 
   const selectedTranslation =
     translations.find(tr => tr.id === translation) || translations[0].id;
-  const animeInfo = await kodikApi.getAnimeByTranslatorId(selectedTranslation);
+  const animeInfo = await kodikService.getAnimeByTranslatorId(
+    selectedTranslation
+  );
 
   if (!animeInfo) {
     response.status(404);
