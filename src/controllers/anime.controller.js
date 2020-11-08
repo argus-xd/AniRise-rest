@@ -1,4 +1,4 @@
-const kodikService = require("../services/kodik");
+const animeService = require("../services/anime");
 const animeDb = require("../services/anime-db");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
@@ -9,7 +9,7 @@ const animeById = async ({ params, query }, response) => {
   const translation = query.translation;
 
   try {
-    return await kodikService.getAnimeById(params.id, episode, translation);
+    return await animeService.getAnimeById(params.id, episode, translation);
   } catch (error) {
     response.status(404);
     return { error };
