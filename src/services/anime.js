@@ -72,8 +72,20 @@ const getTranslations = async (animeId, translation) => {
   };
 };
 
-const getEpisodePlaylist = (episode, translation) => {
-  return { episode, translation };
+const getEpisodePlaylist = async (episodeNumber, translation) => {
+  const anime = await getAnimeByTranslatorId(translation);
+
+  if (!anime) throw "No anime found";
+
+  const episode = anime.episodes.find(
+    episode => (episode.number = episodeNumber)
+  );
+
+  if (!episode) throw "No episode found";
+
+  const [, type, id, hash] = episode.link.split("/").filter(x => x);
+
+  return kodikApi.videoPlaylist(id, type, hash);
 };
 
 const getAnimeByTranslatorId = async translatorId => {
@@ -118,12 +130,6 @@ const getEpisodesFromAnime = (anime, seasons) => {
     number: Number(episode),
     link
   }));
-};
-
-const getPlaylistByEpisodeLink = link => {
-  const [, type, id, hash] = link.split("/").filter(x => x);
-
-  return kodikApi.videoPlaylist(id, type, hash);
 };
 
 module.exports = {

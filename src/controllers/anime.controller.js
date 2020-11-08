@@ -1,5 +1,6 @@
 const animeService = require("../services/anime");
 const animeMapper = require("../utils/anime-mapper");
+const playListService = require("../services/playlist");
 
 const animeById = async ({ params }, response) => {
   const anime = await animeService.getById(params.id);
@@ -31,15 +32,19 @@ const animeTranslations = ({ params, query }, response) => {
 };
 
 const episodePlaylist = async ({ params }, response) => {
-  const playlist = await animeService.getEpisodePlaylist(
-    params.episode,
-    params.translation
-  );
-  if (!playlist) {
+  try {
+    const playList = await animeService.getEpisodePlaylist(
+      params.episode,
+      params.translation
+    );
+
+    response.type("application/x-mpegURL");
+    return playListService.makeMaster(playList);
+  } catch (error) {
     response.status(404);
-    return { error: "No episode found" };
+    if (typeof error !== "string") error = error.message;
+    return { error };
   }
-  return playlist;
 };
 
 module.exports = {

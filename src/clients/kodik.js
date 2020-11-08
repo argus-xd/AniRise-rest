@@ -20,6 +20,7 @@ const videoPlaylist = (id, type, hash) => {
       new URLSearchParams({
         ref: "",
         ref_sign: config.refSign,
+        bad_user: "false",
         type,
         id,
         hash,
@@ -28,7 +29,7 @@ const videoPlaylist = (id, type, hash) => {
     )
     .then(({ data }) =>
       Object.entries(data.links).map(([size, [{ src, type }]]) => ({
-        src: "https:" + src.replace(":hls:manifest.m3u8", ""),
+        src,
         size,
         type
       }))
