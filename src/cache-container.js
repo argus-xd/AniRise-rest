@@ -1,37 +1,19 @@
 const axios = require("axios");
 const config = require("./config").cacheContainer;
-const miniSearch = require("minisearch");
 const animeSorter = require("./utils/anime-sorter");
+const events = require("events");
 
-const searchEngine = new miniSearch({
-  fields: ["title", "title_orig"],
-  storeFields: ["shikimori_id", "title"]
-});
+const eventEmitter = new events();
 
-let cachedAnime = [];
-const searchResultsLimit = 30;
+const on = (eventKey, callback) => eventEmitter.on(eventKey, callback);
 
-const animeList = () => cachedAnime;
-
-const animeSearch = searchTerm => {
-  const result = [];
-  const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
-
-  for (const searchResult of searchResults) {
-    const foundAnime = cachedAnime.find(
-      anime => anime.shikimori_id === searchResult.shikimori_id
-    );
-
-    if (foundAnime) {
-      result.push(foundAnime);
-      if (result.length >= searchResultsLimit) {
-        break;
-      }
-    }
-  }
-
-  return result;
+const cache = {
+  allAnime: [],
+  uniqueAnime: []
 };
+
+const animeList = () => cache.uniqueAnime;
+const animeListFull = () => cache.allAnime;
 
 const updateCache = async () => {
   const timeElapsedLabel = "Cache update elapsed time";
@@ -45,7 +27,8 @@ const updateCache = async () => {
   }
 
   downloadedAnime = downloadedAnime.sort(animeSorter.select("date", "desc"));
-  const uniqueAnime = downloadedAnime.filter((anime, index) => {
+  cache.allAnime = downloadedAnime;
+  cache.uniqueAnime = downloadedAnime.filter((anime, index) => {
     const foundIndex = downloadedAnime.findIndex(
       found => found.shikimori_id === anime.shikimori_id
     );
@@ -53,12 +36,11 @@ const updateCache = async () => {
     return index === foundIndex;
   });
 
-  searchEngine.removeAll();
-  searchEngine.addAll(uniqueAnime);
-  cachedAnime = downloadedAnime;
-
-  console.log("Anime in cache: " + cachedAnime.length);
+  console.log(
+    `Anime in cache: total(${cache.allAnime.length}); unique(${cache.uniqueAnime.length});`
+  );
   console.timeEnd(timeElapsedLabel);
+  eventEmitter.emit("cache:updated", true);
 };
 
 const downloadDump = dumpName => {
@@ -71,7 +53,8 @@ const downloadDump = dumpName => {
 setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
 
 module.exports = {
+  on,
   updateCache,
   animeList,
-  animeSearch
+  animeListFull
 };

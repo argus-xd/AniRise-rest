@@ -1,6 +1,38 @@
 const kodikApi = require("../clients/kodik");
 const cacheContainer = require("../cache-container");
 const animeMapper = require("../utils/anime-mapper");
+const miniSearch = require("minisearch");
+
+const searchResultsLimit = 30;
+const searchEngine = new miniSearch({
+  fields: ["title", "title_orig"],
+  storeFields: ["shikimori_id", "title"]
+});
+
+cacheContainer.on("cache:updated", () => {
+  searchEngine.removeAll();
+  searchEngine.addAll(cacheContainer.animeList());
+});
+
+const search = searchTerm => {
+  const result = [];
+  const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
+
+  for (const searchResult of searchResults) {
+    const foundAnime = cachedAnime.find(
+      anime => anime.shikimori_id === searchResult.shikimori_id
+    );
+
+    if (foundAnime) {
+      result.push(foundAnime);
+      if (result.length >= searchResultsLimit) {
+        break;
+      }
+    }
+  }
+
+  return result;
+};
 
 const getAnimeList = (limit = 100) => {
   return kodikApi.list({
@@ -62,7 +94,7 @@ const getAnimeByTranslatorId = async translatorId => {
 };
 
 const translationsListByShikimoriId = async id => {
-  const dubsList = await cacheContainer.animeList().filter(anime => {
+  const dubsList = await cacheContainer.animeListFull().filter(anime => {
     return anime.shikimori_id === id;
   });
 
@@ -94,6 +126,7 @@ const getPlaylistByEpisodeLink = link => {
 };
 
 module.exports = {
+  search,
   getAnimeById,
   getAnimeList
 };
