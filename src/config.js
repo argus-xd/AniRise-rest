@@ -12,7 +12,7 @@ module.exports = {
       url: "https://kodikapi.com",
       videoUrl: "http://kodik.cc/video-getter",
       refSign:
-        "25a1671883c52de4648325bf8a460326a75bf2ba86feaf0cab5095eba70bb75d",
+        "208d2a75f78d8afe7a1c73c2d97fd3ce07534666ab4405369f4f8705a9741144",
       hash2: "VbMker577gwz"
     }
   },
