@@ -10,7 +10,7 @@ module.exports = {
     kodik: {
       authToken: process.env.KODIK_AUTH_TOKEN,
       url: "https://kodikapi.com",
-      videoUrl: "http://kodik.cc/video-information",
+      videoUrl: "http://kodik.cc/video-getter",
       refSign:
         "208d2a75f78d8afe7a1c73c2d97fd3ce07534666ab4405369f4f8705a9741144",
       hash2: "OErmnYyYA4wHwOP"
