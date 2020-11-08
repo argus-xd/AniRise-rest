@@ -18,7 +18,7 @@ module.exports = {
   },
   serviceHost: "localhost",
   restPort: process.env.REST_PORT || 8080,
-  animeDb: {
+  cacheContainer: {
     dumpsHost: process.env.ANIME_DUMPS_HOST || "https://dumps.kodik.biz",
     dumpsList: envArray(
       "CACHE_DUMPS_LIST",

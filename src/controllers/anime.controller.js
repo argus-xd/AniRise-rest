@@ -1,5 +1,5 @@
 const animeService = require("../services/anime");
-const animeDb = require("../services/anime-db");
+const cacheContainer = require("../cache-container");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
 const animeMapper = require("../utils/anime-mapper");
@@ -21,7 +21,7 @@ const animeList = ({ query }) => {
   const selectedSort = animeSorter.select(query["sort-field"], sortDirection);
   const limit = rangeNumber(query["limit"], 1, 100);
 
-  return animeDb
+  return cacheContainer
     .animeList()
     .sort(selectedSort)
     .slice(0, limit)
@@ -29,7 +29,7 @@ const animeList = ({ query }) => {
 };
 
 const animeSearch = ({ query }) => {
-  return animeDb.animeSearch(query["title"] || "").map(animeMapper.list);
+  return cacheContainer.animeSearch(query["title"] || "").map(animeMapper.list);
 };
 
 module.exports = {

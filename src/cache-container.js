@@ -1,7 +1,7 @@
 const axios = require("axios");
-const { animeDb } = require("../config");
+const config = require("./config").cacheContainer;
 const miniSearch = require("minisearch");
-const animeSorter = require("../utils/anime-sorter");
+const animeSorter = require("./utils/anime-sorter");
 
 const searchEngine = new miniSearch({
   fields: ["title", "title_orig"],
@@ -39,7 +39,7 @@ const updateCache = async () => {
 
   let downloadedAnime = [];
 
-  for (const dumpName of animeDb.dumpsList) {
+  for (const dumpName of config.dumpsList) {
     const dumpAnime = await downloadDump(dumpName);
     downloadedAnime = [...downloadedAnime, ...dumpAnime];
   }
@@ -63,12 +63,12 @@ const updateCache = async () => {
 
 const downloadDump = dumpName => {
   return axios
-    .get(`${animeDb.dumpsHost}/${dumpName}`)
+    .get(`${config.dumpsHost}/${dumpName}`)
     .then(({ data }) => data)
     .catch(() => []);
 };
 
-setInterval(() => updateCache(), animeDb.cacheUpdateIntervalMinutes * 60000);
+setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
 
 module.exports = {
   updateCache,
