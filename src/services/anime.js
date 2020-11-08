@@ -21,9 +21,9 @@ const search = searchTerm => {
   const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
 
   for (const searchResult of searchResults) {
-    const foundAnime = cacheContainer.animeList().find(
-      anime => anime.shikimori_id === searchResult.shikimori_id
-    );
+    const foundAnime = cacheContainer
+      .animeList()
+      .find(anime => anime.shikimori_id === searchResult.shikimori_id);
 
     if (foundAnime) {
       result.push(foundAnime);
@@ -57,8 +57,10 @@ const getAnimeById = async (id, episode = 1, translation) => {
   const animeInfo = await getAnimeByTranslatorId(translation);
   if (!animeInfo) throw "No anime found";
 
-  const foundEpisode = animeInfo.episodes.find(ep => ep.number === episode);
-  if (!foundEpisode) throw "No episode found";
+  let foundEpisode = animeInfo.episodes.find(ep => ep.number === episode);
+  if (!foundEpisode && animeInfo.episodes.length) {
+    foundEpisode = animeInfo.episodes[0];
+  } else if (!foundEpisode) throw "No episode found";
 
   const totalEpisodes =
     animeInfo.episodes[animeInfo.episodes.length - 1].number;
@@ -67,7 +69,7 @@ const getAnimeById = async (id, episode = 1, translation) => {
   return {
     ...animeMapper.view(animeInfo),
     episodes: {
-      current: episode,
+      current: foundEpisode.number,
       total: totalEpisodes,
       playList
     },
