@@ -21,6 +21,10 @@ const animeSearch = ({ query }) => {
   return animeService.search(query["title"] || "").map(animeMapper.list);
 };
 
+const episodeSource = ({ params, query }) => {
+  return "test";
+};
+
 const animeTranslations = ({ params, query }, response) => {
   try {
     return animeService.getTranslations(params.id, query["translation"]);
@@ -34,5 +38,6 @@ module.exports = {
   animeList,
   animeById,
   animeSearch,
+  episodeSource,
   animeTranslations
 };

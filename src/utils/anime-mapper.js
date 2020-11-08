@@ -6,6 +6,7 @@ module.exports = {
     type: anime.type,
     title: anime.title,
     titleOriginal: anime.title_orig,
+    episodes: anime.episodes_count,
     poster: get(anime, "material_data.poster_url", ""),
     description: get(anime, "material_data.description", ""),
     genres: get(anime, "material_data.anime_genres", []),
