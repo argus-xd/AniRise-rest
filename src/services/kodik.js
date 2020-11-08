@@ -1,3 +1,4 @@
+const animeDb = require("../services/anime-db");
 const kodikApi = require("../clients/kodik");
 const animeMapper = require("../utils/anime-mapper");
 
@@ -61,8 +62,8 @@ const getAnimeByTranslatorId = async translatorId => {
 };
 
 const translationsListByShikimoriId = async id => {
-  const dubsList = await kodikApi.search({
-    shikimori_id: id
+  const dubsList = await animeDb.animeList().filter(anime => {
+    return anime.shikimori_id === id;
   });
 
   return dubsList.map(anime => ({
