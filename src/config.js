@@ -24,6 +24,6 @@ module.exports = {
       "CACHE_DUMPS_LIST",
       "films/anime.json, serials/anime-serial.json"
     ),
-    cacheUpdateIntervalMinutes: process.env.CACHE_UPDATE_INTERVAL_MINUTES || 60
+    cacheUpdateIntervalMinutes: process.env.CACHE_UPDATE_INTERVAL_MINUTES || 30
   }
 };
