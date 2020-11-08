@@ -21,8 +21,13 @@ const animeSearch = ({ query }) => {
   return animeService.search(query["title"] || "").map(animeMapper.list);
 };
 
+const animePlaylist = () => {
+  return "playlist";
+};
+
 module.exports = {
   animeList,
   animeById,
-  animeSearch
+  animeSearch,
+  animePlaylist
 };
