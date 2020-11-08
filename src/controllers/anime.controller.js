@@ -1,16 +1,14 @@
 const animeService = require("../services/anime");
 const animeMapper = require("../utils/anime-mapper");
 
-const animeById = async ({ params, query }, response) => {
-  const episode = Number(query.episode) || 1;
-  const translation = query.translation;
-
-  try {
-    return await animeService.getAnimeById(params.id, episode, translation);
-  } catch (error) {
+const animeById = async ({ params }, response) => {
+  const anime = await animeService.getAnimeById(params.id);
+  if (!anime) {
     response.status(404);
-    return { error };
+    return { error: "No anime found" };
   }
+
+  return animeMapper.view(anime);
 };
 
 const animeList = ({ query }) => {

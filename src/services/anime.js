@@ -3,7 +3,6 @@ const cacheContainer = require("../cache-container");
 const miniSearch = require("minisearch");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
-const animeMapper = require("../utils/anime-mapper");
 
 const searchResultsLimit = 30;
 const searchEngine = new miniSearch({
@@ -46,38 +45,8 @@ const getAnimeList = (limit = 100, sortField, sortDirection = "desc") => {
     .slice(0, correctLimit);
 };
 
-const getAnimeById = async (id, episode = 1, translation) => {
-  const translations = await translationsListByShikimoriId(id);
-
-  if (!translations.length) throw "No anime found";
-
-  translation = (
-    translations.find(tr => tr.id === translation) || translations[0]
-  ).id;
-  const animeInfo = await getAnimeByTranslatorId(translation);
-  if (!animeInfo) throw "No anime found";
-
-  let foundEpisode = animeInfo.episodes.find(ep => ep.number === episode);
-  if (!foundEpisode && animeInfo.episodes.length) {
-    foundEpisode = animeInfo.episodes[0];
-  } else if (!foundEpisode) throw "No episode found";
-
-  const totalEpisodes =
-    animeInfo.episodes[animeInfo.episodes.length - 1].number;
-  const playList = await getPlaylistByEpisodeLink(foundEpisode.link).catch();
-
-  return {
-    ...animeMapper.view(animeInfo),
-    episodes: {
-      current: foundEpisode.number,
-      total: totalEpisodes,
-      playList
-    },
-    translations: {
-      current: translation,
-      list: translations
-    }
-  };
+const getAnimeById = async id => {
+  return cacheContainer.animeList().find(anime => anime.shikimori_id === id);
 };
 
 const getAnimeByTranslatorId = async translatorId => {
