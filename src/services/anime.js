@@ -20,6 +20,7 @@ const search = searchTerm => {
 
   for (const searchResult of searchResults) {
     const foundAnime = cachedAnime.find(
+    const foundAnime = cacheContainer.animeList().find(
       anime => anime.shikimori_id === searchResult.shikimori_id
     );
 

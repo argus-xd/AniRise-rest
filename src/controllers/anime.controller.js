@@ -30,6 +30,7 @@ const animeList = ({ query }) => {
 
 const animeSearch = ({ query }) => {
   return cacheContainer.animeSearch(query["title"] || "").map(animeMapper.list);
+  return animeService.search(query["title"] || "").map(animeMapper.list);
 };
 
 module.exports = {
