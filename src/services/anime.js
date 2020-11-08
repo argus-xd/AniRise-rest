@@ -1,7 +1,9 @@
 const kodikApi = require("../clients/kodik");
 const cacheContainer = require("../cache-container");
-const animeMapper = require("../utils/anime-mapper");
 const miniSearch = require("minisearch");
+const rangeNumber = require("../utils/range-number");
+const animeSorter = require("../utils/anime-sorter");
+const animeMapper = require("../utils/anime-mapper");
 
 const searchResultsLimit = 30;
 const searchEngine = new miniSearch({
@@ -19,7 +21,6 @@ const search = searchTerm => {
   const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
 
   for (const searchResult of searchResults) {
-    const foundAnime = cachedAnime.find(
     const foundAnime = cacheContainer.animeList().find(
       anime => anime.shikimori_id === searchResult.shikimori_id
     );
@@ -35,13 +36,14 @@ const search = searchTerm => {
   return result;
 };
 
-const getAnimeList = (limit = 100) => {
-  return kodikApi.list({
-    types: "anime-serial,anime",
-    with_episodes: "true",
-    with_material_data: "true",
-    limit
-  });
+const getAnimeList = (limit = 100, sortField, sortDirection = "desc") => {
+  const correctLimit = rangeNumber(limit, 1, cacheContainer.animeList().length);
+  const selectedSort = animeSorter.select(sortField, sortDirection);
+
+  return cacheContainer
+    .animeList()
+    .sort(selectedSort)
+    .slice(0, correctLimit);
 };
 
 const getAnimeById = async (id, episode = 1, translation) => {
