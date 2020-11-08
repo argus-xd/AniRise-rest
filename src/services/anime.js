@@ -35,7 +35,7 @@ const search = searchTerm => {
   return result;
 };
 
-const getAnimeList = (limit = 100, sortField, sortDirection = "desc") => {
+const getList = (limit = 100, sortField, sortDirection = "desc") => {
   const correctLimit = rangeNumber(limit, 1, cacheContainer.animeList().length);
   const selectedSort = animeSorter.select(sortField, sortDirection);
 
@@ -45,8 +45,31 @@ const getAnimeList = (limit = 100, sortField, sortDirection = "desc") => {
     .slice(0, correctLimit);
 };
 
-const getAnimeById = async id => {
+const getById = async id => {
   return cacheContainer.animeList().find(anime => anime.shikimori_id === id);
+};
+
+const getTranslations = async (animeId, translation) => {
+  const translations = await translationsListByShikimoriId(animeId);
+
+  if (!translations.length) throw "No anime found";
+
+  translation = (
+    translations.find(tr => tr.id === translation) || translations[0]
+  ).id;
+  const animeInfo = await getAnimeByTranslatorId(translation);
+  if (!animeInfo || !animeInfo.episodes.length) throw "No anime found";
+
+  const firstEpisode = animeInfo.episodes[0].number;
+  const lastEpisode = animeInfo.episodes[animeInfo.episodes.length - 1].number;
+
+  return {
+    list: translations,
+    current: {
+      name: translation,
+      episodes: { from: firstEpisode, to: lastEpisode }
+    }
+  };
 };
 
 const getAnimeByTranslatorId = async translatorId => {
@@ -101,6 +124,7 @@ const getPlaylistByEpisodeLink = link => {
 
 module.exports = {
   search,
-  getAnimeById,
-  getAnimeList
+  getById,
+  getList,
+  getTranslations
 };
