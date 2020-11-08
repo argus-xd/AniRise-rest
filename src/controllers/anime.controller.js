@@ -21,10 +21,6 @@ const animeSearch = ({ query }) => {
   return animeService.search(query["title"] || "").map(animeMapper.list);
 };
 
-const episodeSource = ({ params, query }) => {
-  return "test";
-};
-
 const animeTranslations = ({ params, query }, response) => {
   try {
     return animeService.getTranslations(params.id, query["translation"]);
@@ -34,10 +30,22 @@ const animeTranslations = ({ params, query }, response) => {
   }
 };
 
+const episodePlaylist = async ({ params }, response) => {
+  const playlist = await animeService.getEpisodePlaylist(
+    params.episode,
+    params.translation
+  );
+  if (!playlist) {
+    response.status(404);
+    return { error: "No episode found" };
+  }
+  return playlist;
+};
+
 module.exports = {
   animeList,
   animeById,
   animeSearch,
-  episodeSource,
+  episodePlaylist,
   animeTranslations
 };

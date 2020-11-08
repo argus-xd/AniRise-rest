@@ -72,6 +72,10 @@ const getTranslations = async (animeId, translation) => {
   };
 };
 
+const getEpisodePlaylist = (episode, translation) => {
+  return { episode, translation };
+};
+
 const getAnimeByTranslatorId = async translatorId => {
   const animeList = await kodikApi.search({
     id: translatorId,
@@ -126,5 +130,6 @@ module.exports = {
   search,
   getById,
   getList,
-  getTranslations
+  getTranslations,
+  getEpisodePlaylist
 };
