@@ -83,9 +83,7 @@ const getEpisodePlaylist = async (episodeNumber, translation) => {
 
   if (!episode) throw "No episode found";
 
-  const [, type, id, hash] = episode.link.split("/").filter(x => x);
-
-  return kodikApi.videoPlaylist(id, type, hash);
+  return kodikApi.videoPlaylist(episode.link);
 };
 
 const getAnimeByTranslatorId = async translatorId => {
