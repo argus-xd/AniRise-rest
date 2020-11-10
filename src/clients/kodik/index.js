@@ -1,7 +1,17 @@
 const config = require("../config").clients.kodik;
+const { timestamp } = require("../utils/date");
 const client = require("axios").create({
   baseURL: config.url
 });
+
+const videoGetter = {
+  lastUpdate: 0,
+  isActual: () =>
+    videoGetter.lastUpdate > timestamp() - config.videoGetterUpdateIntervalMs,
+  update: async () => {
+    videoGetter.lastUpdate = timestamp();
+  }
+};
 
 const simpleGetRequest = (endpoint, params = {}) => {
   return client
@@ -13,7 +23,9 @@ const simpleGetRequest = (endpoint, params = {}) => {
 const list = params => simpleGetRequest("/list", params);
 const search = params => simpleGetRequest("/search", params);
 
-const videoPlaylist = (id, type, hash) => {
+const videoPlaylist = episodeLink => {
+  const [, type, id, hash] = episodeLink.split("/").filter(x => x);
+
   return client
     .post(
       config.videoUrl,
