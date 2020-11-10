@@ -54,10 +54,9 @@ const getTranslations = async (animeId, translation) => {
 
   if (!translations.length) throw "No anime found";
 
-  translation = (
-    translations.find(tr => tr.id === translation) || translations[0]
-  ).id;
-  const animeInfo = await getAnimeByTranslatorId(translation);
+  translation =
+    translations.find(tr => tr.id === translation) || translations[0];
+  const animeInfo = await getAnimeByTranslatorId(translation.id);
   if (!animeInfo || !animeInfo.episodes.length) throw "No anime found";
 
   const firstEpisode = animeInfo.episodes[0].number;
@@ -66,7 +65,7 @@ const getTranslations = async (animeId, translation) => {
   return {
     list: translations,
     current: {
-      name: translation,
+      ...translation,
       episodes: { from: firstEpisode, to: lastEpisode }
     }
   };
