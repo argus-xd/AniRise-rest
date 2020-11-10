@@ -1,33 +1,56 @@
-const animeDb = require("../services/anime-db");
-const rangeNumber = require("../utils/range-number");
-const animeSorter = require("../utils/anime-sorter");
-const get = require("lodash.get");
+const animeService = require("../services/anime");
+const animeMapper = require("../utils/anime-mapper");
+const playListService = require("../services/playlist");
+
+const animeById = async ({ params }, response) => {
+  const anime = await animeService.getById(params.id);
+  if (!anime) {
+    response.status(404);
+    return { error: "No anime found" };
+  }
+
+  return animeMapper.view(anime);
+};
 
 const animeList = ({ query }) => {
-  const sortDirection = query["sort-direction"] || "desc";
-  const selectedSort = animeSorter.select(query["sort-field"], sortDirection);
-  const limit = rangeNumber(query["limit"], 1, 100);
-
-  return animeDb
-    .animeList()
-    .sort(selectedSort)
-    .slice(0, limit)
-    .map(listFormatMapper);
+  return animeService
+    .getList(query["limit"], query["sort-field"], query["sort-direction"])
+    .map(animeMapper.list);
 };
 
 const animeSearch = ({ query }) => {
-  return animeDb.animeSearch(query["title"] || "").map(listFormatMapper);
+  return animeService.search(query["title"] || "").map(animeMapper.list);
 };
 
-const listFormatMapper = anime => ({
-  title: anime.title,
-  shikimoriId: anime.shikimori_id,
-  updated_at: anime.updated_at,
-  rating: get(anime, "material_data.shikimori_rating", 0),
-  poster: get(anime, "material_data.poster_url", "")
-});
+const animeTranslations = ({ params, query }, response) => {
+  try {
+    return animeService.getTranslations(params.id, query["translation"]);
+  } catch (error) {
+    response.status(404);
+    return { error };
+  }
+};
+
+const episodePlaylist = async ({ params }, response) => {
+  try {
+    const playList = await animeService.getEpisodePlaylist(
+      params.episode,
+      params.translation
+    );
+
+    response.type("application/x-mpegURL");
+    return playListService.makeMaster(playList);
+  } catch (error) {
+    response.status(404);
+    if (typeof error !== "string") error = error.message;
+    return { error };
+  }
+};
 
 module.exports = {
   animeList,
-  animeSearch
+  animeById,
+  animeSearch,
+  episodePlaylist,
+  animeTranslations
 };

@@ -6,6 +6,7 @@ const LocalStorage = require("node-localstorage").LocalStorage;
 localStorage = new LocalStorage("./scratch");
 require("dotenv").config();
 const token = process.env.KODIK_AUTH_TOKEN;
+const config = require("../config").clients.kodik;
 
 const createFrameUrl = request => {
   const { episode, link, season } = request.params;
@@ -33,7 +34,7 @@ const getLinks = async (id, episode, season) => {
   console.log(idSeria);
   console.log(hash);
 
-  let get = await fetch("http://kodik.cc/video-information", {
+  let get = await fetch(config.videoUrl, {
     headers: {
       accept: "application/json, text/javascript, *!/!*; q=0.01",
       "accept-language":
@@ -80,7 +81,7 @@ const apiGetLinks = async (request, res) => {
     console.log(idSeria);
     console.log(hash);*/
 
-  let get = await fetch("http://kodik.cc/video-information", {
+  let get = await fetch(config.videoUrl, {
     headers: {
       accept: "application/json, text/javascript, *!/!*; q=0.01",
       "accept-language":
@@ -94,10 +95,11 @@ const apiGetLinks = async (request, res) => {
     mode: "cors",
     credentials: "omit"
   });
-  text = await get.text();
-  text = await JSON.parse(text);
 
-  res.send(text["links"]);
+  get.text().then(text => {
+    const { links } = JSON.parse(text);
+    res.send(links);
+  });
 };
 
 const getLinkFromHtml = async html => {
