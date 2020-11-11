@@ -77,7 +77,7 @@ const getEpisodePlaylist = async (episodeNumber, translation) => {
   if (!anime) throw "No anime found";
 
   const episode = anime.episodes.find(
-    episode => (episode.number = episodeNumber)
+    episode => episode.number === Number(episodeNumber)
   );
 
   if (!episode) throw "No episode found";
