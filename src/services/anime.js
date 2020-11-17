@@ -1,33 +1,12 @@
 const kodikApi = require("../clients/kodik");
 const cacheContainer = require("../cache-container");
-const miniSearch = require("minisearch");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
 
 const searchResultsLimit = 30;
-const searchEngine = new miniSearch({
-  fields: ["title", "title_orig"],
-  storeFields: ["shikimori_id", "title"]
-});
 
 const search = searchTerm => {
-  const result = [];
-  const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
-
-  for (const searchResult of searchResults) {
-    const foundAnime = cacheContainer
-      .animeList()
-      .find(anime => anime.shikimori_id === searchResult.shikimori_id);
-
-    if (foundAnime) {
-      result.push(foundAnime);
-      if (result.length >= searchResultsLimit) {
-        break;
-      }
-    }
-  }
-
-  return result;
+  return cacheContainer.animeList().slice(0, 10);
 };
 
 const getList = (limit = 100, sortField, sortDirection = "desc") => {
