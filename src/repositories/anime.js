@@ -1,18 +1,7 @@
-const mysql = require("mysql2");
-const config = require("../config").mysql;
-
-const pool = mysql
-  .createPool({
-    host: config.host,
-    user: config.user,
-    password: config.pass,
-    database: config.db,
-    connectionLimit: 5
-  })
-  .promise();
+const connection = require("./connection");
 
 const getAll = async () => {
-  return pool.execute("SELECT * FROM `anime`").then(([rows]) => rows);
+  return connection.execute("SELECT * FROM `anime`").then(([rows]) => rows);
 };
 
 const insert = async animeList => {
@@ -22,7 +11,7 @@ const insert = async animeList => {
 
   const sql = `INSERT INTO anime (${queryFields.fields}) VALUES ? ON DUPLICATE KEY UPDATE ${queryFields.updateFields}`;
 
-  await pool.query(sql, [animeList.map(anime => Object.values(anime))]);
+  await connection.query(sql, [animeList.map(anime => Object.values(anime))]);
 };
 
 const objectFields = object => {
