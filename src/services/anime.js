@@ -100,13 +100,12 @@ const getAnimeByTranslatorId = async translatorId => {
 
 const translationsListByShikimoriId = async id => {
   const dubsList = await cacheContainer.animeListFull().filter(anime => {
-    return anime.shikimori_id === id;
+    return anime.shikimoriId === id;
   });
 
   return dubsList.map(anime => ({
     id: anime.id,
-    translator: anime.translation.title,
-    type: anime.translation.type
+    translator: anime.translation
   }));
 };
 

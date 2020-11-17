@@ -5,6 +5,7 @@ module.exports = {
     type: anime.type,
     title: anime.title,
     titleOriginal: anime.title_orig,
+    translation: anime.translation?.title || "",
     episodes: anime.episodes_count || 1,
     poster: anime.material_data?.poster_url || "",
     description: anime.material_data?.description || "",

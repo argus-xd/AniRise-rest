@@ -24,7 +24,10 @@ const animeSearch = ({ query }) => {
 
 const animeTranslations = ({ params, query }, response) => {
   try {
-    return animeService.getTranslations(params.id, query["translation"]);
+    return animeService.getTranslations(
+      Number(params.id),
+      query["translation"]
+    );
   } catch (error) {
     response.status(404);
     return { error };
