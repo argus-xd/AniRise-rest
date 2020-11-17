@@ -1,5 +1,3 @@
-const get = require("lodash.get");
-
 module.exports = {
   db: anime => ({
     id: anime.id,

@@ -16,13 +16,14 @@ const getAll = async () => {
 };
 
 const insert = async animeList => {
-  const sql = `INSERT INTO anime (${Object.keys(animeList[0]).join(
-    ", "
-  )}) VALUES ?`;
+  if (!animeList.length) return;
+
+  const sql = `REPLACE INTO anime (${keysList(animeList[0])}) VALUES ?`;
 
   await pool
-    .query(sql, [animeList.map(anime => Object.values(anime))])
-    .catch(ex => console.log(ex));
+    .query(sql, [animeList.map(anime => Object.values(anime))]);
 };
+
+const keysList = object => Object.keys(object).join(", ");
 
 module.exports = { getAll, insert };
