@@ -41,7 +41,7 @@ const getList = (limit = 100, sortField, sortDirection = "desc") => {
 };
 
 const getById = async id => {
-  return cacheContainer.animeList().find(anime => anime.shikimori_id === id);
+  return cacheContainer.animeList().find(anime => anime.shikimoriId === id);
 };
 
 const getTranslations = async (animeId, translation) => {

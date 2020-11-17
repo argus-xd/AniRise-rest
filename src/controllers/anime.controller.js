@@ -3,7 +3,7 @@ const animeMapper = require("../utils/anime-mapper");
 const playListService = require("../services/playlist");
 
 const animeById = async ({ params }, response) => {
-  const anime = await animeService.getById(params.id);
+  const anime = await animeService.getById(Number(params.id));
   if (!anime) {
     response.status(404);
     return { error: "No anime found" };
