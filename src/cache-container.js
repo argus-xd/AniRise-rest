@@ -1,11 +1,7 @@
 const axios = require("axios");
 const config = require("./config").cacheContainer;
-const animeSorter = require("./utils/anime-sorter");
-const events = require("events");
-
-const eventEmitter = new events();
-
-const on = (eventKey, callback) => eventEmitter.on(eventKey, callback);
+const animeMapper = require("./utils/anime-mapper");
+const animeRepository = require("./repositories/anime");
 
 const cache = {
   allAnime: [],
@@ -15,32 +11,59 @@ const cache = {
 const animeList = () => cache.uniqueAnime;
 const animeListFull = () => cache.allAnime;
 
-const updateCache = async () => {
-  const timeElapsedLabel = "Cache update elapsed time";
+const init = async () => {
+  const timeElapsedLabel = "Cache initialized in";
   console.time(timeElapsedLabel);
+  await loadAnimeFromDb();
+  console.timeEnd(timeElapsedLabel);
 
-  let downloadedAnime = [];
+  updateCache();
+  setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
+};
 
-  for (const dumpName of config.dumpsList) {
-    const dumpAnime = await downloadDump(dumpName);
-    downloadedAnime = [...downloadedAnime, ...dumpAnime];
-  }
-
-  downloadedAnime = downloadedAnime.sort(animeSorter.select("date", "desc"));
-  cache.allAnime = downloadedAnime;
-  cache.uniqueAnime = downloadedAnime.filter((anime, index) => {
-    const foundIndex = downloadedAnime.findIndex(
-      found => found.shikimori_id === anime.shikimori_id
+const loadAnimeFromDb = async () => {
+  cache.allAnime = await animeRepository.getAll();
+  cache.uniqueAnime = cache.allAnime.filter((anime, index) => {
+    const foundIndex = cache.allAnime.findIndex(
+      found => found.shikimoriId === anime.shikimoriId
     );
 
     return index === foundIndex;
   });
+};
 
-  console.log(
-    `Anime in cache: total(${cache.allAnime.length}); unique(${cache.uniqueAnime.length});`
-  );
-  console.timeEnd(timeElapsedLabel);
-  eventEmitter.emit("cache:updated", true);
+const updateCache = async () => {
+  const animeToUpdate = [];
+
+  for (const dumpName of config.dumpsList) {
+    const animeList = await downloadDump(dumpName);
+
+    for (const rawAnime of animeList) {
+      const anime = animeMapper.db(rawAnime);
+      const needUpdate = animeNeedUpdate(anime);
+
+      if (needUpdate) {
+        animeToUpdate.push(anime);
+      }
+    }
+  }
+
+  console.log("animeToUpdate:", animeToUpdate.length);
+
+  if (animeToUpdate.length) {
+    await animeRepository.insert(animeToUpdate);
+    loadAnimeFromDb();
+  }
+};
+
+const animeNeedUpdate = anime => {
+  const foundAnime = cache.allAnime.find(cached => cached.id === anime.id);
+
+  if (!foundAnime) {
+    return true;
+  }
+
+  return false;
 };
 
 const downloadDump = dumpName => {
@@ -50,11 +73,8 @@ const downloadDump = dumpName => {
     .catch(() => []);
 };
 
-setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
-
 module.exports = {
-  on,
-  updateCache,
+  init,
   animeList,
   animeListFull
 };

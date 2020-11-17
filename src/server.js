@@ -11,13 +11,13 @@ const cacheContainer = require("./cache-container");
 const { restPort } = require("./config");
 
 (async () => {
-  await cacheContainer.updateCache();
+  await cacheContainer.init();
 
   const app = express();
 
   app.use(morgan("tiny"));
   app.use(cors());
-  app.use(function(req, res, next) {
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
       "Access-Control-Allow-Headers",
@@ -41,6 +41,6 @@ const { restPort } = require("./config");
   app.set("views", path.join(__dirname, "views"));
 
   app.listen(restPort, () => {
-    console.log("We are live on " + restPort);
+    console.log("Rest API started on: " + restPort);
   });
 })();

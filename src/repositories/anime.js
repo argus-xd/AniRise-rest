@@ -15,4 +15,14 @@ const getAll = async () => {
   return pool.execute("SELECT * FROM `anime`").then(([rows]) => rows);
 };
 
-module.exports = { getAll };
+const insert = async animeList => {
+  const sql = `INSERT INTO anime (${Object.keys(animeList[0]).join(
+    ", "
+  )}) VALUES ?`;
+
+  await pool
+    .query(sql, [animeList.map(anime => Object.values(anime))])
+    .catch(ex => console.log(ex));
+};
+
+module.exports = { getAll, insert };

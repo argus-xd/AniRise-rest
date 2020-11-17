@@ -10,11 +10,6 @@ const searchEngine = new miniSearch({
   storeFields: ["shikimori_id", "title"]
 });
 
-cacheContainer.on("cache:updated", () => {
-  searchEngine.removeAll();
-  searchEngine.addAll(cacheContainer.animeList());
-});
-
 const search = searchTerm => {
   const result = [];
   const searchResults = searchEngine.search(searchTerm, { fuzzy: 0.2 });
