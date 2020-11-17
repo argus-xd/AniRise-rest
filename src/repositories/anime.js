@@ -4,14 +4,14 @@ const getAll = async () => {
   return connection.execute("SELECT * FROM `anime`").then(([rows]) => rows);
 };
 
-const insert = async animeList => {
+const insert = animeList => {
   if (!animeList.length) return;
 
   const queryFields = objectFields(animeList[0]);
 
   const sql = `INSERT INTO anime (${queryFields.fields}) VALUES ? ON DUPLICATE KEY UPDATE ${queryFields.updateFields}`;
 
-  await connection.query(sql, [animeList.map(anime => Object.values(anime))]);
+  return connection.query(sql, [animeList.map(anime => Object.values(anime))]);
 };
 
 const objectFields = object => {
