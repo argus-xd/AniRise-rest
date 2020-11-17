@@ -48,7 +48,7 @@ const updateCache = async () => {
     }
   }
 
-  console.log("animeToUpdate:", animeToUpdate.length);
+  console.log("animeToUpdate", animeToUpdate.length);
 
   if (animeToUpdate.length) {
     await animeRepository.insert(animeToUpdate);
@@ -63,7 +63,7 @@ const animeNeedUpdate = anime => {
     return true;
   }
 
-  return false;
+  return foundAnime.updatedAt - anime.updatedAt !== 0;
 };
 
 const downloadDump = dumpName => {

@@ -11,7 +11,7 @@ module.exports = {
     poster: anime.material_data?.poster_url || "",
     description: anime.material_data?.description || "",
     rating: anime.material_data?.shikimori_rating || "",
-    updatedAt: anime.updated_at
+    updatedAt: new Date(anime.updated_at)
   }),
   view: anime => ({
     id: anime.shikimoriId,
