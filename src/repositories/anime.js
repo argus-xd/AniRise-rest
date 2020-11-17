@@ -18,12 +18,23 @@ const getAll = async () => {
 const insert = async animeList => {
   if (!animeList.length) return;
 
-  const sql = `REPLACE INTO anime (${keysList(animeList[0])}) VALUES ?`;
+  const queryFields = objectFields(animeList[0]);
 
-  await pool
-    .query(sql, [animeList.map(anime => Object.values(anime))]);
+  const sql = `INSERT INTO anime (${queryFields.fields}) VALUES ? ON DUPLICATE KEY UPDATE ${queryFields.updateFields}`;
+
+  await pool.query(sql, [animeList.map(anime => Object.values(anime))]);
 };
 
-const keysList = object => Object.keys(object).join(", ");
+const objectFields = object => {
+  const keys = Object.keys(object);
+
+  const fields = keys.join(", ");
+  const updateFields = keys
+    .filter(key => key !== "id")
+    .map(key => `${key}=VALUES(${key})`)
+    .join(", ");
+
+  return { fields, updateFields };
+};
 
 module.exports = { getAll, insert };
