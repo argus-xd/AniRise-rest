@@ -6,6 +6,12 @@ const envArray = (variableName, defaultValue = "") => {
 };
 
 module.exports = {
+  mysql: {
+    host: process.env.MYSQL_HOST || "127.0.0.1",
+    user: process.env.MYSQL_USER || "root",
+    pass: process.env.MYSQL_PASS || "",
+    db: process.env.MYSQL_DB || ""
+  },
   clients: {
     kodik: {
       authToken: process.env.KODIK_AUTH_TOKEN,
