@@ -80,8 +80,8 @@ const translationsListByShikimoriId = async id => {
   });
 
   return dubsList.map(anime => ({
-    id: anime.id,
-    translator: anime.translation
+    id: anime.translationId,
+    translator: anime.translator
   }));
 };
 
