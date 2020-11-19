@@ -18,8 +18,9 @@ const animeList = ({ query }) => {
     .map(animeMapper.list);
 };
 
-const animeSearch = ({ query }) => {
-  return animeService.search(query["title"] || "").map(animeMapper.list);
+const animeSearch = async ({ query }) => {
+  const searchResult = await animeService.search(query["title"]);
+  return searchResult.map(animeMapper.list);
 };
 
 const animeTranslations = ({ params, query }, response) => {

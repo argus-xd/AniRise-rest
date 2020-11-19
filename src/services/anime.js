@@ -2,12 +2,9 @@ const kodikApi = require("../clients/kodik");
 const cacheContainer = require("../cache-container");
 const rangeNumber = require("../utils/range-number");
 const animeSorter = require("../utils/anime-sorter");
+const searchService = require("./search");
 
-const searchResultsLimit = 30;
-
-const search = searchTerm => {
-  return cacheContainer.animeList().slice(0, 10);
-};
+const search = searchTerm => searchService(searchTerm);
 
 const getList = (limit = 100, sortField, sortDirection = "desc") => {
   const correctLimit = rangeNumber(limit, 1, cacheContainer.animeList().length);
