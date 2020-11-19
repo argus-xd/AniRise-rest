@@ -6,6 +6,10 @@ const envArray = (variableName, defaultValue = "") => {
 };
 
 module.exports = {
+  sphinx: {
+    host: process.env.SPHINX_HOST || "127.0.0.1",
+    port: 9312
+  },
   mysql: {
     host: process.env.MYSQL_HOST || "127.0.0.1",
     user: process.env.MYSQL_USER || "root",
