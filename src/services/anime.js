@@ -20,26 +20,37 @@ const getById = async id => {
   return cacheContainer.animeList().find(anime => anime.shikimoriId === id);
 };
 
-const getTranslations = async (animeId, translation) => {
+const getTranslations = async animeId => {
   const translations = await translationsListByShikimoriId(animeId);
 
-  if (!translations.length) throw "No anime found";
+  const animeInfoList = (
+    await Promise.allSettled(
+      translations.map(({ id }) => getAnimeByTranslatorId(id))
+    )
+  ).filter(
+    ({ status, value }) => status === "fulfilled" && value.episodes.length
+  );
 
-  translation =
-    translations.find(tr => tr.id === translation) || translations[0];
-  const animeInfo = await getAnimeByTranslatorId(translation.id);
-  if (!animeInfo || !animeInfo.episodes.length) throw "No anime found";
+  if (!animeInfoList.length) throw "No anime found";
 
-  const firstEpisode = animeInfo.episodes[0].number;
-  const lastEpisode = animeInfo.episodes[animeInfo.episodes.length - 1].number;
+  return animeInfoList
+    .map(({ value: animeInfo }) => {
+      const firstEpisode = animeInfo.episodes[0].number;
+      const lastEpisode =
+        animeInfo.episodes[animeInfo.episodes.length - 1].number;
+      const episodeNumbers = animeInfo.episodes.map(ep => ep.number);
 
-  return {
-    list: translations,
-    current: {
-      ...translation,
-      episodes: { from: firstEpisode, to: lastEpisode }
-    }
-  };
+      return {
+        id: animeInfo.id,
+        translator: animeInfo.translator,
+        episodes: {
+          from: firstEpisode,
+          to: lastEpisode,
+          list: episodeNumbers
+        }
+      };
+    })
+    .sort((a, b) => b.episodes.list.length - a.episodes.list.length);
 };
 
 const getEpisodePlaylist = async (episodeNumber, translation) => {

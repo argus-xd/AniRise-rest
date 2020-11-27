@@ -23,12 +23,9 @@ const animeSearch = async ({ query }) => {
   return searchResult.map(animeMapper.list);
 };
 
-const animeTranslations = ({ params, query }, response) => {
+const animeTranslations = ({ params }, response) => {
   try {
-    return animeService.getTranslations(
-      Number(params.id),
-      query["translation"]
-    );
+    return animeService.getTranslations(Number(params.id));
   } catch (error) {
     response.status(404);
     return { error };
