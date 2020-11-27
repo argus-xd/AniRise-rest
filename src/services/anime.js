@@ -42,7 +42,8 @@ const getTranslations = async animeId => {
 
       return {
         id: animeInfo.id,
-        translator: animeInfo.translator,
+        translator: animeInfo.translation.title,
+        type: animeInfo.translation.type,
         episodes: {
           from: firstEpisode,
           to: lastEpisode,
