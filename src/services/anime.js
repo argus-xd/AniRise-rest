@@ -34,23 +34,16 @@ const getTranslations = async animeId => {
   if (!animeInfoList.length) throw "No anime found";
 
   return animeInfoList
-    .map(({ value: animeInfo }) => {
-      const firstEpisode = animeInfo.episodes[0].number;
-      const lastEpisode =
-        animeInfo.episodes[animeInfo.episodes.length - 1].number;
-      const episodeNumbers = animeInfo.episodes.map(ep => ep.number);
-
-      return {
-        id: animeInfo.id,
-        translator: animeInfo.translation.title,
-        type: animeInfo.translation.type,
-        episodes: {
-          from: firstEpisode,
-          to: lastEpisode,
-          list: episodeNumbers
-        }
-      };
-    })
+    .map(({ value: animeInfo }) => ({
+      id: animeInfo.id,
+      translator: animeInfo.translation.title,
+      type: animeInfo.translation.type,
+      episodes: {
+        from: animeInfo.episodes[0].number,
+        to: animeInfo.episodes[animeInfo.episodes.length - 1].number,
+        list: animeInfo.episodes.map(ep => ep.number)
+      }
+    }))
     .sort((a, b) => b.episodes.list.length - a.episodes.list.length);
 };
 
