@@ -26,8 +26,8 @@ const infoById = async id => {
   return {
     title: animeInfo.russian,
     titleEng: animeInfo.name,
-    url: animeInfo.url,
-    poster: animeInfo.image?.original ?? "",
+    url: config.url + animeInfo.url,
+    poster: config.url + (animeInfo.image?.original ?? ""),
     description: animeInfo.description,
     genres: (animeInfo?.genres ?? []).map(genre => genre.name),
     franchise: (franchise?.nodes ?? []).map(({ id, date }) => ({

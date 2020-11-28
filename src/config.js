@@ -21,7 +21,7 @@ module.exports = {
   },
   clients: {
     shikimori: {
-      url: "https://shikimori.one/"
+      url: "https://shikimori.one"
     },
     kodik: {
       authToken: process.env.KODIK_AUTH_TOKEN,
