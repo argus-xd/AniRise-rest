@@ -10,6 +10,8 @@ const {
   clients: { kodik: config }
 } = require("../config");
 
+const kodikClient = require("../clients/kodik");
+
 const getLinks = async (id, episode, season) => {
   let json = await getAnimeById(id);
   let link = json["results"][0]["seasons"]
