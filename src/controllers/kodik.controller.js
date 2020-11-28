@@ -1,4 +1,3 @@
-/*const puppeteer = require("puppeteer");*/
 const httpRequest = require("request");
 const jschardet = require("jschardet");
 const fetch = require("node-fetch");
@@ -15,17 +14,11 @@ const createFrameUrl = request => {
 };
 
 const getLinks = async (id, episode, season) => {
-  /* console.log(id); */
   let json = await getAnimeById(id);
-  /*   console.log(json); */
   let link = json["results"][0]["seasons"]
     ? json["results"][0]["seasons"][season]["episodes"][episode]
     : json["results"][0]["link"];
 
-  /*
-      http://animerise.ddns.net:3000/get_link/http%3A%2F%2Faniqit.com%2Fserial%2F4179%2F91d73ed3fa1c38f9da474c7b80ebfada%2F720p/serial-4179/1/1
-   */
-  /* let type = "seria"; //video */
   let type = link.split("/")[3] == "serial" ? "seria" : link.split("/")[3];
   let idSeria = link.split("/")[4];
   let hash = link.split("/")[5];
@@ -59,17 +52,15 @@ const apiGetLinks = async (request, res) => {
   let episode = request.params.episode;
 
   let json = await getAnimeById(id);
-  /* console.log(json);*/
   let link = json["results"][0]["seasons"]
     ? json["results"][0]["seasons"][season]["episodes"][episode]
     : json["results"][0]["link"];
 
-  /* console.log(link);*/
   let type = "";
   let idSeria = "";
   let hash = "";
   if (link && link.length > 0) {
-    type = link.split("/")[3]; // type = link.split("/")[3] == "serial" ? "seria" : link.split("/")[3];
+    type = link.split("/")[3];
     idSeria = link.split("/")[4];
     hash = link.split("/")[5];
   } else {
@@ -77,9 +68,6 @@ const apiGetLinks = async (request, res) => {
     res.send({ message: "zero links" });
     return;
   }
-  /*console.log(type);
-    console.log(idSeria);
-    console.log(hash);*/
 
   let get = await fetch(config.videoUrl, {
     headers: {
@@ -102,61 +90,9 @@ const apiGetLinks = async (request, res) => {
   });
 };
 
-const getLinkFromHtml = async html => {
-  const browser = await puppeteer.launch({
-    /*headless: false ,
-            ignoreDefaultArgs: true, */
-
-    executablePath:
-      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" /*  */,
-    args: [
-      /*  "--disable-extensions-except=/me",*/
-      /*    "--load-extension=/me",
-                  "--user-data-dir=Argus\\AppData\\Local\\Chromium\\User Data\\Profile 1"  */
-      /*    "--profile-directory=Dafault" */
-    ]
-  });
-
-  const page = await browser.newPage();
-
-  await page.setContent(html);
-
-  await page.setRequestInterception(true);
-
-  let getLinksFromRequest = new Promise((resolve, reject) => {
-    let i = 0;
-    page.on("request", request => {
-      i++;
-      if (request.url().indexOf("http://get.kodik") != -1) {
-        /*  http://get.kodik-storage.com */
-
-        resolve(request);
-      }
-      if (i > 100) {
-        reject("miss url");
-      }
-      request.continue();
-    });
-    page.click("iframe");
-  });
-
-  const links = await getLinksFromRequest
-    .then(r => {
-      /*   console.log(r["_url"]); */
-      return r["_url"];
-    })
-    .catch(r => {
-      console.log(r);
-    });
-
-  await browser.close();
-  return links;
-};
-
 const getAnimeById = async function(id) {
   const requestPage = "search";
   const url = `https://kodikapi.com/${requestPage}?token=${token}&id=${id}&with_episodes=true&with_material_data=true&episode=1`;
-  /* console.log(url); */
 
   let promise = await fetch(url);
 
@@ -182,7 +118,6 @@ const ApiGetAnimeById = async (request, res) => {
 const kinoposk = async (request, res) => {
   const { id, kinoposkID } = request.params;
   const url = `https://kodikapi.com/search?token=${token}&kinopoisk_id=${kinoposkID}&with_episodes=true&with_material_data=true`;
-  /* console.log(url);  */
 
   let promise = await fetch(url);
 
@@ -251,12 +186,6 @@ const getLinkController = async function(request, res) {
   const { id, episode, season } = request.params;
   const frameUrl = createFrameUrl(request);
 
-  const html = `<iframe src="${frameUrl}" width="700" height="400"></iframe>`;
-
-  /* const titleUrl = await getLinkFromHtml(html);
-
-      const titleUrlMaxQuality = titleUrl.replace(["360.mp4"], ["720.mp4"]);
-      */
   const titleUrl = await getLinks(id, episode, season);
 
   const lastElem = Object.keys(titleUrl)[Object.keys(titleUrl).length - 1];
@@ -281,12 +210,10 @@ const getLinkController = async function(request, res) {
 };
 
 const searchControllerJson = async function(findAnime) {
-  searchTitleEncode = encodeURIComponent(findAnime);
+  let searchTitleEncode = encodeURIComponent(findAnime);
 
-  //const requestPage = request.query.search ? "search" : "list";
   const requestPage = "search";
   const url = `https://kodikapi.com/${requestPage}?token=${token}&title=${searchTitleEncode}`;
-  /*  console.log(url); */
   let promise = await fetch(url);
 
   let text = await promise.text();
@@ -294,15 +221,8 @@ const searchControllerJson = async function(findAnime) {
 
   return text;
 };
-const searchController = function(request, res, next) {
-  /* console.log("\n\n\n"); */
-
-  /*  console.log(
-          `${request.query.search} ${request.query.box_hardware} ${request.query.box_user} ${request.query.lip} `
-      ); */
+const searchController = function(request, res) {
   let searchTitle = request.query.search || "";
-
-  /*  console.log(request._parsedUrl.query); */
 
   let searchTitleEncode = encodeURIComponent(searchTitle);
 
@@ -327,8 +247,6 @@ const apiSearch = function(request, res, next) {
   let searchTitleEncode = encodeURIComponent(searchTitle);
   const requestPage = searchTitleEncode ? "search" : "list";
   const url = `https://kodikapi.com/${requestPage}?token=${token}&title=${searchTitleEncode}&types=anime-serial,anime&with_episodes=true&with_material_data=true`;
-  /*  console.log(searchTitle);
-    console.log(url);*/
 
   res.set({ "content-type": "application/json; charset=utf-8" });
   httpRequest.get(url, (error, response, body) => res.end(body));
@@ -389,8 +307,6 @@ const apiSearchId = function(request, res, next) {
 
 const listController = async (request, res) => {
   let link = encodeURIComponent(request.params.link);
-  let count = request.params.count;
-  let season = request.params.season;
   const getInfo = await getAnimeById(request.params.id).then(r => {
     return r["results"][0];
   });
@@ -399,8 +315,6 @@ const listController = async (request, res) => {
   let meterialData = getInfo["material_data"];
   let last_episode = getInfo["last_episode"] || 1;
   let episodes_count = getInfo["episodes_count"] || 1;
-
-  /*  console.log(getInfo); */
 
   let list = "";
   list += `<items>\n`;
