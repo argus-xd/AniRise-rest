@@ -40,6 +40,10 @@ const { restPort } = require("./config");
   app.set("view engine", ".hbs");
   app.set("views", path.join(__dirname, "views"));
 
+  app.get("/", function(req, res) {
+    res.render("home");
+  });
+
   app.listen(restPort, () => {
     console.log("Rest API started on: " + restPort);
   });
