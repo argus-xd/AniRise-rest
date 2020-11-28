@@ -2,6 +2,7 @@ const axios = require("axios");
 const config = require("./config").cacheContainer;
 const animeMapper = require("./utils/anime-mapper");
 const animeRepository = require("./repositories/anime");
+const shikimoriClient = require("./clients/shikimori");
 
 const cache = {
   allAnime: [],
@@ -19,12 +20,25 @@ const init = async () => {
 
   updateCache().then(() => {
     setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
-    setInterval(() => updateAdditionalAnimeInfo(), 60000);
+    setInterval(async () => {
+      const animeToUpdate = cache.allAnime
+        .filter(({ needUpdateInfo }) => needUpdateInfo)
+        .slice(0, 10);
+
+      for (const { shikimoriId } of animeToUpdate) {
+        await updateAdditionalAnimeInfo(shikimoriId);
+      }
+    }, 20000);
   });
 };
 
 const loadAnimeFromDb = async () => {
-  cache.allAnime = await animeRepository.getAll();
+  cache.allAnime = (await animeRepository.getAll()).map(
+    ({ shikimoriData, ...restFields }) => ({
+      shikimoriData: JSON.parse(shikimoriData ?? "{}"),
+      ...restFields
+    })
+  );
   cache.uniqueAnime = cache.allAnime.filter((anime, index) => {
     const foundIndex = cache.allAnime.findIndex(
       found => found.shikimoriId === anime.shikimoriId
@@ -56,8 +70,30 @@ const updateCache = async () => {
   }
 };
 
-const updateAdditionalAnimeInfo = async () => {
-  // update anime
+const updateAdditionalAnimeInfo = async shikimoriId => {
+  const { title, titleEng, ...data } = await shikimoriClient.infoById(
+    shikimoriId
+  );
+  if (title) {
+    const updateList = [];
+    cache.allAnime
+      .filter(anime => anime.shikimoriId === shikimoriId)
+      .forEach(anime => {
+        anime.shikimoriTitle = title;
+        anime.shikimoriTitleEng = titleEng;
+        anime.shikimoriData = data;
+
+        updateList.push({
+          id: anime.id,
+          needUpdateInfo: 0,
+          shikimoriTitle: title,
+          shikimoriTitleEng: titleEng,
+          shikimoriData: JSON.stringify(data)
+        });
+      });
+
+    animeRepository.insert(updateList);
+  }
 };
 
 const animeNeedUpdate = anime => {

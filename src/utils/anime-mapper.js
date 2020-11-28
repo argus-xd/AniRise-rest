@@ -16,15 +16,17 @@ module.exports = {
   dbToView: anime => ({
     id: anime.shikimoriId,
     type: anime.type,
-    title: anime.title,
-    titleOriginal: anime.titleOriginal,
+    title: anime.shikimoriTitle ?? anime.title,
+    titleEnglish: anime.shikimoriTitleEng ?? anime.titleOriginal,
     episodes: anime.episodes,
     poster: anime.poster,
     description: anime.description,
-    rating: anime.rating
+    rating: anime.rating,
+    shikimoriData: anime.shikimoriData ?? {}
   }),
   dbToList: anime => ({
-    title: anime.title,
+    title: anime.shikimoriTitle ?? anime.title,
+    titleEnglish: anime.shikimoriTitleEng ?? anime.titleOriginal,
     shikimoriId: anime.shikimoriId,
     updated_at: anime.updated_at,
     rating: anime.rating,
