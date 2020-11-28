@@ -43,6 +43,7 @@ const updateCache = async () => {
       const needUpdate = animeNeedUpdate(anime);
 
       if (needUpdate) {
+        anime.needUpdateInfo = 1;
         animeToUpdate.push(anime);
       }
     }
