@@ -8,7 +8,7 @@ const envArray = (variableName, defaultValue = "") => {
 const restPort = process.env.REST_PORT || 8080;
 
 module.exports = {
-  apiHost: "http://127.0.0.1:" + restPort || process.env.API_HOST,
+  apiHost: process.env.API_HOST || "http://127.0.0.1:" + restPort,
   sphinx: {
     host: process.env.SPHINX_HOST || "127.0.0.1",
     port: 9312
