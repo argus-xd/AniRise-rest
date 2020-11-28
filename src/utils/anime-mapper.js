@@ -11,7 +11,7 @@ module.exports = {
     description: anime.material_data?.description || "",
     rating: anime.material_data?.shikimori_rating || "",
     needUpdateInfo: 1,
-    updatedAt: new Date(anime.updated_at)
+    updatedAt: anime.updated_at
   }),
   dbToView: anime => ({
     id: anime.shikimoriId,
@@ -28,7 +28,7 @@ module.exports = {
     title: anime.shikimoriTitle ?? anime.title,
     titleEnglish: anime.shikimoriTitleEng ?? anime.titleOriginal,
     shikimoriId: anime.shikimoriId,
-    updated_at: anime.updated_at,
+    updated_at: anime.updatedAt,
     rating: anime.rating,
     poster: anime.poster
   })
