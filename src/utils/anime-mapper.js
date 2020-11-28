@@ -1,5 +1,5 @@
 module.exports = {
-  db: anime => ({
+  rawToDb: anime => ({
     shikimoriId: anime.shikimori_id,
     type: anime.type,
     title: anime.title,
@@ -10,9 +10,10 @@ module.exports = {
     poster: anime.material_data?.poster_url || "",
     description: anime.material_data?.description || "",
     rating: anime.material_data?.shikimori_rating || "",
+    needUpdateInfo: 1,
     updatedAt: new Date(anime.updated_at)
   }),
-  view: anime => ({
+  dbToView: anime => ({
     id: anime.shikimoriId,
     type: anime.type,
     title: anime.title,
@@ -22,7 +23,7 @@ module.exports = {
     description: anime.description,
     rating: anime.rating
   }),
-  list: anime => ({
+  dbToList: anime => ({
     title: anime.title,
     shikimoriId: anime.shikimoriId,
     updated_at: anime.updated_at,

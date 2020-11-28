@@ -39,11 +39,10 @@ const updateCache = async () => {
     const animeList = await downloadDump(dumpName);
 
     for (const rawAnime of animeList) {
-      const anime = animeMapper.db(rawAnime);
+      const anime = animeMapper.rawToDb(rawAnime);
       const needUpdate = animeNeedUpdate(anime);
 
       if (needUpdate) {
-        anime.needUpdateInfo = 1;
         animeToUpdate.push(anime);
       }
     }
