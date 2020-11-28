@@ -64,7 +64,6 @@ const updateCache = async () => {
     }
   }
 
-  console.log("animeToUpdate.length:", animeToUpdate.length);
   if (animeToUpdate.length) {
     await animeRepository.insert(animeToUpdate);
     await loadAnimeFromDb();
