@@ -51,7 +51,7 @@ const prepareListXml = animeList => {
   for (const anime of animeList) {
     items.push(`
         <channel>
-            <title>${anime.title}</title>
+            <title>${anime.title} - ${anime.translator}</title>
             <playlist_url>${apiHost}/tv/anime/${anime.translationId}</playlist_url>
             <description>
                 <div style='font-size:24px'>
@@ -88,7 +88,7 @@ const viewAnime = async ({ params }, response) => {
   anime.episodes.forEach(({ number: episode }) => {
     items.push(`
         <channel>
-            <title>${anime.title}</title>
+            <title>Эпизод: ${episode}</title>
             <stream_url>${apiHost}/playlist/${anime.id}/${episode}/</stream_url>
             <description>
                 <div style='font-size:24px'>
