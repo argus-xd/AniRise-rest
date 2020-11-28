@@ -17,8 +17,10 @@ const init = async () => {
   await loadAnimeFromDb();
   console.timeEnd(timeElapsedLabel);
 
-  updateCache();
-  setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
+  updateCache().then(() => {
+    setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
+    setInterval(() => updateAdditionalAnimeInfo(), 60000);
+  });
 };
 
 const loadAnimeFromDb = async () => {
@@ -50,8 +52,12 @@ const updateCache = async () => {
 
   if (animeToUpdate.length) {
     await animeRepository.insert(animeToUpdate);
-    loadAnimeFromDb();
+    await loadAnimeFromDb();
   }
+};
+
+const updateAdditionalAnimeInfo = async () => {
+  // update anime
 };
 
 const animeNeedUpdate = anime => {
