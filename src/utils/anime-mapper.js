@@ -16,20 +16,20 @@ module.exports = {
   dbToView: anime => ({
     id: anime.shikimoriId,
     type: anime.type,
-    title: anime.shikimoriTitle ?? anime.title,
-    titleEnglish: anime.shikimoriTitleEng ?? anime.titleOriginal,
+    title: anime.shikimoriTitle || anime.title,
+    titleEnglish: anime.shikimoriTitleEng || anime.titleOriginal,
     episodes: anime.episodes,
-    poster: anime.poster,
+    poster: anime.shikimoriData?.poster || anime.poster,
     description: anime.description,
     rating: anime.rating,
-    shikimoriData: anime.shikimoriData ?? {}
+    shikimoriData: anime.shikimoriData || {}
   }),
   dbToList: anime => ({
-    title: anime.shikimoriTitle ?? anime.title,
-    titleEnglish: anime.shikimoriTitleEng ?? anime.titleOriginal,
+    title: anime.shikimoriTitle || anime.title,
+    titleEnglish: anime.shikimoriTitleEng || anime.titleOriginal,
     shikimoriId: anime.shikimoriId,
     updated_at: anime.updatedAt,
     rating: anime.rating,
-    poster: anime.poster
+    poster: anime.shikimoriData?.poster || anime.poster
   })
 };
