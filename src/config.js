@@ -20,6 +20,9 @@ module.exports = {
     db: process.env.MYSQL_DB || ""
   },
   clients: {
+    shikimori: {
+      url: "https://shikimori.one/"
+    },
     kodik: {
       authToken: process.env.KODIK_AUTH_TOKEN,
       url: "https://kodikapi.com",
