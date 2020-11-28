@@ -52,7 +52,7 @@ const prepareListXml = animeList => {
     items.push(`
         <channel>
             <title>${anime.title}</title>
-            <playlist_url>${apiHost}/tv/anime/${anime.shikimoriId}</playlist_url>
+            <playlist_url>${apiHost}/tv/anime/${anime.translationId}</playlist_url>
             <description>
                 <div style='font-size:24px'>
                     <img style='float:left' width=200 height=auto src='${anime.poster}'>
@@ -72,72 +72,44 @@ const prepareListXml = animeList => {
     `);
   }
 
-  return `<items>\n${items.join("")}\n</items>`;
+  return `<items>${items.join("")}</items>`;
 };
 
-const viewAnime = async ({ params }) => {
-  const anime = await animeService.getById(Number(params.id));
+const viewAnime = async ({ params }, response) => {
+  const anime = await animeService.getAnimeByTranslationId(params.translation);
 
-  return anime;
+  if (!anime) {
+    response.status(404);
+    return "Anime not found";
+  }
 
-  return `
-    <items>
+  const items = [];
+
+  anime.episodes.forEach(({ episode }) => {
+    items.push(`
         <channel>
-            
+            <title>${anime.title}</title>
+            <stream_url>${apiHost}/playlist/${anime.id}/${episode}/</stream_url>
+            <description>
+                <div style='font-size:24px'>
+                    <img style='float:left' width=200 height=auto src='${anime.material_data.poster_url}'>
+                    <span style='color:#89A5BF;'>${anime.title}</span>
+                    <div style='color:gold;'>
+                        Жанр: -<br/>
+                        Год: -<br/>
+                        Эпизоды: ${anime.episodes.length}<br/>
+                        Посл.эпизод: ${anime.updated_at}<br/>
+                        Перевод: ${anime.translation.title}
+                    </div>
+                    ${anime.material_data.description}
+                </div>
+            </description>
+            <logo_30x30>${apiHost}</logo_30x30>
         </channel>
-    </items>
-  `;
-  // let link = encodeURIComponent(request.params.link);
-  // const getInfo = await getAnimeById(request.params.id).then(r => {
-  //   return r["results"][0];
-  // });
-  //
-  // let kinopoisk_id = getInfo["kinopoisk_id"];
-  // let meterialData = getInfo["material_data"];
-  // let last_episode = getInfo["last_episode"] || 1;
-  // let episodes_count = getInfo["episodes_count"] || 1;
-  //
-  // let list = "";
-  // list += `<items>\n`;
-  // let numSeasonsArr = getInfo["seasons"]
-  //   ? Object.keys(getInfo["seasons"])
-  //   : [0];
-  //
-  // numSeasonsArr.forEach(seasonsNum => {
-  //   last_episode = getInfo["seasons"]
-  //     ? Object.values(getInfo["seasons"][seasonsNum]["episodes"]).length
-  //     : "1";
-  //
-  //   for (let i = 1; i <= last_episode; i++) {
-  //     list += `<channel>\n`;
-  //     list += `<title>  <![CDATA[Серия: ${i} ]]>   </title>\n`;
-  //     list += `<stream_url>${apiHost}/get_link/${link}/${request.params.id}/${i}/${seasonsNum}</stream_url>\n`;
-  //     try {
-  //       list += `<description>
-  //       <img style='float:left' width=200 height=auto src='${apiHost}/kinoposk/${kinopoisk_id}'>\n
-  //       ${meterialData["title"]}/${meterialData["title_en"]} <br>
-  //       Год: ${meterialData["year"]}    <br>
-  //       Сезон : ${seasonsNum}  <br>
-  //       Эпизодов : ${i} / ${episodes_count}<br>
-  //       Длительность: ${meterialData["duration"]}    <br>
-  //       Жанр: ${meterialData["genres"].join(", ")}    <br>
-  //       Рейтинг Кинопоиск: ${meterialData["kinopoisk_rating"]}    <br>
-  //       Рейтинг imdb: ${meterialData["imdb_rating"]}    <br>
-  //       Описание: ${meterialData["description"]}    <br>
-  //
-  //       </description>`;
-  //     } catch (error) {
-  //       list += `<description> ${error}
-  //           </description>`;
-  //     }
-  //
-  //     list += `<logo_30x30> </logo_30x30>`;
-  //     list += `</channel>`;
-  //   }
-  // });
-  // list += `</items>\n`;
-  //
-  // res.send(list);
+    `);
+  });
+
+  return `<items>${items.join("")}</items>`;
 };
 
 module.exports = {

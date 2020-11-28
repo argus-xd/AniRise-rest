@@ -10,7 +10,7 @@ const routes = [
   ["/playlist/:translation/:episode(\\d+)/?$", animeController.episodePlaylist],
   ["/tv", tvController.mainPage],
   ["/tv/search/", tvController.search],
-  ["/tv/anime/:id(\\d+)", tvController.viewAnime]
+  ["/tv/anime/:translation", tvController.viewAnime]
 ];
 
 routes.forEach(([path, handler, method = "get"]) => {

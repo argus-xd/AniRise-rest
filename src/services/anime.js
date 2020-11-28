@@ -25,7 +25,7 @@ const getTranslations = async animeId => {
 
   const animeInfoList = (
     await Promise.allSettled(
-      translations.map(({ id }) => getAnimeByTranslatorId(id))
+      translations.map(({ id }) => getAnimeByTranslationId(id))
     )
   ).filter(
     ({ status, value }) => status === "fulfilled" && value.episodes.length
@@ -48,7 +48,7 @@ const getTranslations = async animeId => {
 };
 
 const getEpisodePlaylist = async (episodeNumber, translation) => {
-  const anime = await getAnimeByTranslatorId(translation);
+  const anime = await getAnimeByTranslationId(translation);
 
   if (!anime) throw "No anime found";
 
@@ -61,7 +61,7 @@ const getEpisodePlaylist = async (episodeNumber, translation) => {
   return kodikApi.videoPlaylist(episode.link);
 };
 
-const getAnimeByTranslatorId = async translatorId => {
+const getAnimeByTranslationId = async translatorId => {
   const animeList = await kodikApi.search({
     id: translatorId,
     with_episodes: true,
@@ -109,5 +109,6 @@ module.exports = {
   getById,
   getList,
   getTranslations,
-  getEpisodePlaylist
+  getEpisodePlaylist,
+  getAnimeByTranslationId
 };
