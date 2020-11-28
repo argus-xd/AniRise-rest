@@ -1,7 +1,5 @@
 const express = require("express");
-const handlebars = require("express-handlebars");
 const bodyParser = require("body-parser");
-const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./router");
@@ -28,21 +26,6 @@ const { restPort } = require("./config");
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(router, oldRouter);
-
-  app.engine(
-    ".hbs",
-    handlebars({
-      defaultLayout: "main",
-      extname: ".hbs",
-      layoutsDir: path.join(__dirname, "views/layouts")
-    })
-  );
-  app.set("view engine", ".hbs");
-  app.set("views", path.join(__dirname, "views"));
-
-  app.get("/", function(req, res) {
-    res.render("home");
-  });
 
   app.listen(restPort, () => {
     console.log("Rest API started on: " + restPort);
