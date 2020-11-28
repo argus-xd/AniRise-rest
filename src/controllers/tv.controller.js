@@ -85,7 +85,7 @@ const viewAnime = async ({ params }, response) => {
 
   const items = [];
 
-  anime.episodes.forEach(({ episode }) => {
+  anime.episodes.forEach(({ number: episode }) => {
     items.push(`
         <channel>
             <title>${anime.title}</title>
