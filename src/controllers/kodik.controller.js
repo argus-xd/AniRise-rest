@@ -5,13 +5,10 @@ const LocalStorage = require("node-localstorage").LocalStorage;
 localStorage = new LocalStorage("./scratch");
 require("dotenv").config();
 const token = process.env.KODIK_AUTH_TOKEN;
-const config = require("../config").clients.kodik;
-
-const createFrameUrl = request => {
-  const { episode, link, season } = request.params;
-
-  return `${link}?season=${season}&episode=${episode}&only_episode=true`;
-};
+const {
+  apiHost,
+  clients: { kodik: config }
+} = require("../config");
 
 const getLinks = async (id, episode, season) => {
   let json = await getAnimeById(id);
@@ -22,10 +19,6 @@ const getLinks = async (id, episode, season) => {
   let type = link.split("/")[3] == "serial" ? "seria" : link.split("/")[3];
   let idSeria = link.split("/")[4];
   let hash = link.split("/")[5];
-
-  console.log(type);
-  console.log(idSeria);
-  console.log(hash);
 
   let get = await fetch(config.videoUrl, {
     headers: {
@@ -64,7 +57,6 @@ const apiGetLinks = async (request, res) => {
     idSeria = link.split("/")[4];
     hash = link.split("/")[5];
   } else {
-    console.log("Чёт не пришло");
     res.send({ message: "zero links" });
     return;
   }
@@ -143,16 +135,14 @@ const animeList = body => {
     list += `<channel>\n
             <title> ${title["title"]} / ${title["title_orig"]} </title>\n`;
     const encoded = encodeURIComponent(`http:${title["link"]}`);
-    list += `<playlist_url>http://animerise.ddns.net:3000/list/${encoded}/${
-      title["id"]
-    }/${title["last_episode"]}/${
-      title["last_season"] ? title["last_season"] : 1
-    } </playlist_url>\n`;
+    list += `<playlist_url>${apiHost}/list/${encoded}/${title["id"]}/${
+      title["last_episode"]
+    }/${title["last_season"] ? title["last_season"] : 1} </playlist_url>\n`;
     list += `<description>\n`;
     list += `<div style='font-size:24px'>\n`;
 
     if (true)
-      list += `<img style='float:left' width=200 height=auto src='http://animerise.ddns.net:3000/kinoposk/${title["kinopoisk_id"]}'>\n`;
+      list += `<img style='float:left' width=200 height=auto src='${apiHost}/kinoposk/${title["kinopoisk_id"]}'>\n`;
     list += `<span style='color:#89A5BF;  '> ${title["title"]} </span><br>\n`;
 
     if (title["material_data"] && title["material_data"]["genres"]) {
@@ -173,7 +163,7 @@ const animeList = body => {
     list += `</description>\n`;
 
     if (true)
-      list += `<logo_30x30>http://animerise.ddns.net:3000/kinoposk/${title["kinopoisk_id"]}</logo_30x30>\n`;
+      list += `<logo_30x30>${apiHost}/kinoposk/${title["kinopoisk_id"]}</logo_30x30>\n`;
     list += `</channel>\n`;
   }
 
@@ -184,7 +174,6 @@ const animeList = body => {
 
 const getLinkController = async function(request, res) {
   const { id, episode, season } = request.params;
-  const frameUrl = createFrameUrl(request);
 
   const titleUrl = await getLinks(id, episode, season);
 
@@ -192,19 +181,7 @@ const getLinkController = async function(request, res) {
 
   const titleUrlMaxQuality = titleUrl[lastElem][0]["src"];
 
-  console.log(titleUrlMaxQuality);
   const redirectUrl = titleUrlMaxQuality.split(":hls:manifest.m3u8")[0];
-
-  await (async () => {
-    let promise = getAnimeById(id).then(r => {
-      r = r["results"][0];
-      let time = new Date();
-      let timeEp =
-        time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-      let title = `${timeEp} - ${r["title"]} {S-${r["last_season"]} E-${episode}}`;
-      console.log(title); /*  */
-    });
-  })();
 
   res.redirect(redirectUrl);
 };
@@ -227,7 +204,7 @@ const searchController = function(request, res) {
   let searchTitleEncode = encodeURIComponent(searchTitle);
 
   let encoding = jschardet.detect(searchTitle);
-  if (encoding["encoding"] == "ascii") {
+  if (encoding["encoding"] === "ascii") {
     localStorage.setItem("searchTitleEncode", searchTitleEncode);
   }
 
@@ -235,8 +212,6 @@ const searchController = function(request, res) {
   const url = `https://kodikapi.com/${requestPage}?token=${token}&title=${localStorage.getItem(
     "searchTitleEncode"
   )}&${request._parsedUrl.query}`;
-  /*  console.log(url); */
-  console.log(searchTitle);
 
   res.set({ "content-type": "application/json; charset=utf-8" });
   httpRequest.get(url, (error, response, body) => res.end(animeList(body)));
@@ -287,13 +262,13 @@ const apiShkiGetById = async function(request, res, next) {
 };
 const apiList = function(request, res, next) {
   const url = `https://kodikapi.com/list?token=${token}&types=anime-serial,anime&with_episodes=true&with_material_data=true&limit=100`;
-  console.log(url);
+
   res.set({ "content-type": "application/json; charset=utf-8" });
   httpRequest.get(url, (error, response, body) => res.end(body));
 };
 const apiListTop = function(request, res, next) {
   const url = `https://kodikapi.com/list?token=${token}&with_material_data=true&status=ongoing&sort=shikimori_rating&limit=100`;
-  console.log(url);
+
   res.set({ "content-type": "application/json; charset=utf-8" });
   httpRequest.get(url, (error, response, body) => res.end(body));
 };
@@ -323,7 +298,6 @@ const listController = async (request, res) => {
     : [0];
 
   numSeasonsArr.forEach(seasonsNum => {
-    console.log(seasonsNum);
     last_episode = getInfo["seasons"]
       ? Object.values(getInfo["seasons"][seasonsNum]["episodes"]).length
       : "1";
@@ -331,10 +305,10 @@ const listController = async (request, res) => {
     for (let i = 1; i <= last_episode; i++) {
       list += `<channel>\n`;
       list += `<title>  <![CDATA[Серия: ${i} ]]>   </title>\n`;
-      list += `<stream_url>http://animerise.ddns.net:3000/get_link/${link}/${request.params.id}/${i}/${seasonsNum}</stream_url>\n`;
+      list += `<stream_url>${apiHost}/get_link/${link}/${request.params.id}/${i}/${seasonsNum}</stream_url>\n`;
       try {
         list += `<description>
-        <img style='float:left' width=200 height=auto src='http://animerise.ddns.net:3000/kinoposk/${kinopoisk_id}'>\n
+        <img style='float:left' width=200 height=auto src='${apiHost}/kinoposk/${kinopoisk_id}'>\n
         ${meterialData["title"]}/${meterialData["title_en"]} <br>
         Год: ${meterialData["year"]}    <br>
         Сезон : ${seasonsNum}  <br>

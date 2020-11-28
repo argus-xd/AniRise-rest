@@ -5,7 +5,10 @@ const envArray = (variableName, defaultValue = "") => {
     .filter(x => x.length);
 };
 
+const restPort = process.env.REST_PORT || 8080;
+
 module.exports = {
+  apiHost: "http://127.0.0.1:" + restPort || process.env.API_HOST,
   sphinx: {
     host: process.env.SPHINX_HOST || "127.0.0.1",
     port: 9312
@@ -24,7 +27,7 @@ module.exports = {
     }
   },
   serviceHost: "localhost",
-  restPort: process.env.REST_PORT || 8080,
+  restPort,
   cacheContainer: {
     dumpsHost: process.env.ANIME_DUMPS_HOST || "https://dumps.kodik.biz",
     dumpsList: envArray(
