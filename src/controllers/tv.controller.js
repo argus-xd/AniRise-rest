@@ -56,22 +56,10 @@ const viewAnime = async ({ params }, response) => {
   const items = [];
 
   anime.episodes.forEach(({ number: episode }) => {
-    const videoLinks = [
-      {
-        title: `Эпизод: ${episode} [Стрим]`,
-        url: `${apiHost}/playlist/${anime.id}/${episode}/`
-      },
-      {
-        title: `Эпизод: ${episode} [MP4]`,
-        url: `${apiHost}/mp4/${anime.id}/${episode}/`
-      }
-    ];
-
-    videoLinks.forEach(link => {
-      items.push(`
+    items.push(`
         <channel>
-            <title>${link.title}</title>
-            <stream_url>${link.url}</stream_url>
+            <title>Эпизод: ${episode}</title>
+            <stream_url>${apiHost}/tv/anime/${anime.id}/${episode}/</stream_url>
             <description>
                 <div style='font-size:24px'>
                     <img style='float:left' width=200 height=auto src='${anime.material_data.poster_url}'>
@@ -89,7 +77,6 @@ const viewAnime = async ({ params }, response) => {
             <logo_30x30>${apiHost}</logo_30x30>
         </channel>
     `);
-    });
   });
 
   return `<items>${items.join("")}</items>`;
