@@ -97,7 +97,9 @@ const updateAdditionalAnimeInfo = async shikimoriId => {
 };
 
 const animeNeedUpdate = anime => {
-  const foundAnime = cache.allAnime.find(cached => cached.id === anime.id);
+  const foundAnime = cache.allAnime.find(
+    cached => cached.translationId === anime.translationId
+  );
 
   if (!foundAnime) {
     return true;
