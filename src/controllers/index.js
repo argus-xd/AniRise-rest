@@ -1,4 +1,4 @@
 module.exports = {
   animeController: require("./anime.controller"),
-  kodikController: require("./kodik.controller")
+  tvController: require("./tv.controller")
 };

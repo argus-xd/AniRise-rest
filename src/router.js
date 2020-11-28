@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { animeController } = require("./controllers");
+const { animeController, tvController } = require("./controllers");
 
 const routes = [
   ["/anime/", animeController.animeList],
   ["/anime/:id(\\d+)/?$", animeController.animeById],
   ["/anime/:id(\\d+)/translations/", animeController.animeTranslations],
   ["/anime/search/", animeController.animeSearch],
-  ["/playlist/:translation/:episode(\\d+)/?$", animeController.episodePlaylist]
+  ["/playlist/:translation/:episode(\\d+)/?$", animeController.episodePlaylist],
+  ["/tv", tvController.mainPage],
+  ["/tv/search/", tvController.search],
+  ["/tv/anime/:id(\\d+)", tvController.viewAnime],
+  ["/tv/anime/:id(\\d+)/source", tvController.animeSource]
 ];
 
 routes.forEach(([path, handler, method = "get"]) => {

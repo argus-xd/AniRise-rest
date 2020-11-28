@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./router");
-const oldRouter = require("./router.old");
 const cacheContainer = require("./cache-container");
 
 const { restPort } = require("./config");
@@ -25,7 +24,7 @@ const { restPort } = require("./config");
   });
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-  app.use(router, oldRouter);
+  app.use(router);
 
   app.listen(restPort, () => {
     console.log("Rest API started on: " + restPort);
