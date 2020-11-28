@@ -79,6 +79,7 @@ const updateAdditionalAnimeInfo = async shikimoriId => {
     cache.allAnime
       .filter(anime => anime.shikimoriId === shikimoriId)
       .forEach(anime => {
+        anime.needUpdateInfo = 0;
         anime.shikimoriTitle = title;
         anime.shikimoriTitleEng = titleEng;
         anime.shikimoriData = data;
