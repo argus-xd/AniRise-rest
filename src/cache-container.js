@@ -22,7 +22,9 @@ const init = async () => {
     setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
     setInterval(async () => {
       const animeToUpdate = cache.allAnime
-        .filter(({ needUpdateInfo }) => needUpdateInfo)
+        .filter(
+          ({ needUpdateInfo, shikimoriId }) => needUpdateInfo && shikimoriId
+        )
         .slice(0, 10);
 
       for (const { shikimoriId } of animeToUpdate) {
@@ -74,7 +76,8 @@ const updateAdditionalAnimeInfo = async shikimoriId => {
   const { title, titleEng, ...data } = await shikimoriClient.infoById(
     shikimoriId
   );
-  if (title) {
+
+  if (title || titleEng) {
     const updateList = [];
     cache.allAnime
       .filter(anime => anime.shikimoriId === shikimoriId)
