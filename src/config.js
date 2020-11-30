@@ -20,6 +20,9 @@ module.exports = {
     db: process.env.MYSQL_DB || ""
   },
   clients: {
+    anilist: {
+      url: "https://graphql.anilist.co"
+    },
     shikimori: {
       url: "https://shikimori.one"
     },
