@@ -25,9 +25,11 @@ module.exports = {
     titleEnglish: anime.shikimoriTitleEng || anime.titleOriginal,
     episodes: anime.episodes,
     poster: anime.shikimoriData?.poster || anime.poster,
-    description: anime.description,
+    banner: anime.banner,
+    description: anime.shikimoriData?.description || anime.description,
     rating: anime.rating,
-    shikimoriData: anime.shikimoriData || {}
+    shikimoriUrl: anime.shikimoriData?.url || "",
+    genres: anime.shikimoriData?.genres || []
   }),
   cacheToList: anime => ({
     title: anime.shikimoriTitle || anime.title,
