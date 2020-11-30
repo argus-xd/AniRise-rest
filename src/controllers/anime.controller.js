@@ -9,18 +9,18 @@ const animeById = async ({ params }, response) => {
     return { error: "No anime found" };
   }
 
-  return animeMapper.dbToView(anime);
+  return animeMapper.cacheToView(anime);
 };
 
 const animeList = ({ query }) => {
   return animeService
     .getList(query["limit"], query["sort-field"], query["sort-direction"])
-    .map(animeMapper.dbToList);
+    .map(animeMapper.cacheToList);
 };
 
 const animeSearch = async ({ query }) => {
   const searchResult = await animeService.search(query["title"]);
-  return searchResult.map(animeMapper.dbToList);
+  return searchResult.map(animeMapper.cacheToList);
 };
 
 const animeTranslations = ({ params }, response) => {

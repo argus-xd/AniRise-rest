@@ -1,13 +1,10 @@
 const availableSorters = direction => ({
   date: (a, b) => {
-    const aDate = new Date(a.updatedAt);
-    const bDate = new Date(b.updatedAt);
-
     if (direction === "asc") {
-      return aDate < bDate ? -1 : 1;
+      return a.updatedAt - b.updatedAt;
     }
 
-    return aDate < bDate ? 1 : -1;
+    return b.updatedAt - a.updatedAt;
   },
   rating: (a, b) => {
     if (direction === "asc") {

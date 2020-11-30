@@ -13,7 +13,12 @@ module.exports = {
     needUpdateInfo: 1,
     updatedAt: anime.updated_at
   }),
-  dbToView: anime => ({
+  dbToCache: ({ shikimoriData, updatedAt, ...restFields }) => ({
+    shikimoriData: JSON.parse(shikimoriData ?? "{}"),
+    updatedAt: new Date(updatedAt),
+    ...restFields
+  }),
+  cacheToView: anime => ({
     id: anime.shikimoriId,
     type: anime.type,
     title: anime.shikimoriTitle || anime.title,
@@ -24,11 +29,11 @@ module.exports = {
     rating: anime.rating,
     shikimoriData: anime.shikimoriData || {}
   }),
-  dbToList: anime => ({
+  cacheToList: anime => ({
     title: anime.shikimoriTitle || anime.title,
     titleEnglish: anime.shikimoriTitleEng || anime.titleOriginal,
     shikimoriId: anime.shikimoriId,
-    updated_at: anime.updatedAt,
+    updatedAt: anime.updatedAt,
     rating: anime.rating,
     poster: anime.shikimoriData?.poster || anime.poster
   })

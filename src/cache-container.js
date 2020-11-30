@@ -35,12 +35,7 @@ const init = async () => {
 };
 
 const loadAnimeFromDb = async () => {
-  cache.allAnime = (await animeRepository.getAll()).map(
-    ({ shikimoriData, ...restFields }) => ({
-      shikimoriData: JSON.parse(shikimoriData ?? "{}"),
-      ...restFields
-    })
-  );
+  cache.allAnime = (await animeRepository.getAll()).map(animeMapper.dbToCache);
   cache.uniqueAnime = cache.allAnime.filter((anime, index) => {
     const foundIndex = cache.allAnime.findIndex(
       found => found.shikimoriId === anime.shikimoriId
@@ -109,7 +104,10 @@ const animeNeedUpdate = anime => {
     return true;
   }
 
-  return foundAnime.updatedAt !== anime.updatedAt;
+  const dbDate = foundAnime.updatedAt;
+  const apiDate = new Date(anime.updatedAt);
+
+  return dbDate - apiDate !== 0;
 };
 
 const downloadDump = dumpName => {
