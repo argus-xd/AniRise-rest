@@ -22,7 +22,7 @@ const init = async () => {
   updateCache().then(() => {
     setInterval(() => updateCache(), config.cacheUpdateIntervalMinutes * 60000);
     setInterval(async () => {
-      const animeToUpdate = cache.allAnime
+      const animeToUpdate = cache.uniqueAnime
         .filter(
           ({ needUpdateInfo, shikimoriId }) => needUpdateInfo && shikimoriId
         )
