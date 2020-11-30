@@ -3,6 +3,7 @@ const config = require("./config").cacheContainer;
 const animeMapper = require("./utils/anime-mapper");
 const animeRepository = require("./repositories/anime");
 const shikimoriClient = require("./clients/shikimori");
+const anilistClient = require("./clients/anilist");
 
 const cache = {
   allAnime: [],
@@ -73,17 +74,20 @@ const updateAdditionalAnimeInfo = async shikimoriId => {
   );
 
   if (title || titleEng) {
+    const banner = await anilistClient.animeBanner(shikimoriId);
     const updateList = [];
     cache.allAnime
       .filter(anime => anime.shikimoriId === shikimoriId)
       .forEach(anime => {
         anime.needUpdateInfo = 0;
+        anime.banner = banner;
         anime.shikimoriTitle = title;
         anime.shikimoriTitleEng = titleEng;
         anime.shikimoriData = data;
 
         updateList.push({
           id: anime.id,
+          banner: banner,
           needUpdateInfo: 0,
           shikimoriTitle: title,
           shikimoriTitleEng: titleEng,
