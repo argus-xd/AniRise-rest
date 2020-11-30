@@ -1,3 +1,6 @@
+const defaultBanner =
+  "https://www.fortressofsolitude.co.za/wp-content/uploads/2019/05/The-15-Most-Powerful-Anime-Characters-Of-All-Time-scaled.jpg";
+
 module.exports = {
   rawToDb: anime => ({
     shikimoriId: anime.shikimori_id,
@@ -25,7 +28,7 @@ module.exports = {
     titleEnglish: anime.shikimoriTitleEng || anime.titleOriginal,
     episodes: anime.episodes,
     poster: anime.shikimoriData?.poster || anime.poster,
-    banner: anime.banner,
+    banner: anime.banner || defaultBanner,
     description: anime.shikimoriData?.description || anime.description,
     rating: anime.rating,
     shikimoriUrl: anime.shikimoriData?.url || "",
