@@ -16,7 +16,7 @@ const simpleGetRequest = (query, variables) => {
 const animeBanner = async animeId => {
   const query = `
     query ($id: Int) {
-      Media (id: $id, type: ANIME){
+      Media (idMal: $id, type: ANIME){
         bannerImage
       }
     }
