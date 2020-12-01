@@ -28,7 +28,8 @@ module.exports = {
     banner: anime.banner,
     description: anime.shikimoriData?.description || anime.description,
     rating: anime.rating,
-    shikimoriUrl: anime.shikimoriData?.url || "",
+    shikimoriUrl:
+      anime.shikimoriData?.url || `https://shikimori.one/animes/${anime.id}`,
     genres: anime.shikimoriData?.genres || []
   }),
   cacheToList: anime => ({
