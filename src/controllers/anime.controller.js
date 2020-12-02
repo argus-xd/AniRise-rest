@@ -2,14 +2,25 @@ const animeService = require("../services/anime");
 const animeMapper = require("../utils/anime-mapper");
 const playListService = require("../services/playlist");
 
-const animeById = async ({ params }, response) => {
-  const anime = await animeService.getById(Number(params.id));
+const animeById = ({ params }, response) => {
+  const anime = animeService.getById(Number(params.id));
   if (!anime) {
     response.status(404);
     return { error: "No anime found" };
   }
 
-  return animeMapper.cacheToView(anime);
+  const result = animeMapper.cacheToView(anime);
+
+  result.relations = result.relations
+    .map(({ id: animeId, date: releaseDate }) => {
+      const anime = animeService.getById(animeId);
+      if (!anime) return null;
+
+      return { ...animeMapper.cacheToList(anime), releaseDate };
+    })
+    .filter(exists => exists);
+
+  return result;
 };
 
 const animeList = ({ query }) => {

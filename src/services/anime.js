@@ -16,7 +16,7 @@ const getList = (limit = 100, sortField, sortDirection = "desc") => {
     .slice(0, correctLimit);
 };
 
-const getById = async id => {
+const getById = id => {
   return cacheContainer.animeList().find(anime => anime.shikimoriId === id);
 };
 
