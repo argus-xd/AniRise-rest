@@ -5,7 +5,7 @@ const envArray = (variableName, defaultValue = "") => {
     .filter(x => x.length);
 };
 
-const restPort = process.env.REST_PORT || 8080;
+const restPort = process.env.REST_PORT || 3000;
 
 module.exports = {
   apiHost: process.env.API_HOST || "http://127.0.0.1:" + restPort,
@@ -17,7 +17,7 @@ module.exports = {
     host: process.env.MYSQL_HOST || "127.0.0.1",
     user: process.env.MYSQL_USER || "root",
     pass: process.env.MYSQL_PASS || "",
-    db: process.env.MYSQL_DB || ""
+    db: process.env.MYSQL_DB || "anime"
   },
   clients: {
     anilist: {
@@ -27,7 +27,7 @@ module.exports = {
       url: "https://shikimori.one"
     },
     kodik: {
-      authToken: process.env.KODIK_AUTH_TOKEN,
+      authToken: process.env.KODIK_AUTH_TOKEN || 'f20af586686a913f6f5b8f2f8454bb5b',
       url: "https://kodikapi.com",
       videoGetterUpdateInterval: 300
     }

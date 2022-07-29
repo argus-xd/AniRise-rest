@@ -74,7 +74,37 @@ const getPlayerUrl = (domain, episodeLink) => {
   return episodeLink.replace(`${domain}/`, `${domain}/go/`);
 };
 
+const deCodeLink = src => {
+  const srcReverse = src
+    .split("")
+    .reverse()
+    .join("");
+  return Buffer.from(srcReverse, "base64").toString();
+};
+
+const clientGvi = (params = {}) => {
+  return axios
+    .postForm("http://aniqit.com/gvi", params)
+    .then(({ data }) => {
+      return data;
+    })
+    .catch(error => console.log(error));
+};
+
+const gviLinksSrc = async ({ type, id, hash, quality = "720", hls = true }) => {
+  console.log({ type, id, hash, quality, hls });
+  const data = await clientGvi({ type, id, hash });
+  const links = data["links"];
+  const keyMaxQuality = Object.keys(links).at(-1);
+  const srcHash = links[quality][0].src;
+  const src = deCodeLink(srcHash);
+  const mp4 = src.split(":hls");
+
+  return hls ? src : mp4[0];
+};
+
 module.exports = {
   url,
-  requestParams
+  requestParams,
+  gviLinksSrc
 };
