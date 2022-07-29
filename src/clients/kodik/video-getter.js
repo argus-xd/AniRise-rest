@@ -92,7 +92,6 @@ const clientGvi = (params = {}) => {
 };
 
 const gviLinksSrc = async ({ type, id, hash, quality = "720", hls = true }) => {
-  console.log({ type, id, hash, quality, hls });
   const data = await clientGvi({ type, id, hash });
   const links = data["links"];
   const keyMaxQuality = Object.keys(links).at(-1);
