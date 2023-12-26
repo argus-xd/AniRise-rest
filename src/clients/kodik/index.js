@@ -16,17 +16,10 @@ const list = params => simpleGetRequest("/list", params);
 const search = params => simpleGetRequest("/search", params);
 
 const videoPlaylist = async episodeLink => {
-  const requestParams = await videoGetter.requestParams(episodeLink);
+  const [domain, type, id, hash] = episodeLink.split("/").filter(x => x);
+  const gviLink = await videoGetter.gviLinksSrc({ type, id, hash });
 
-  return client
-    .post(videoGetter.url(), new URLSearchParams(requestParams).toString())
-    .then(({ data }) =>
-      Object.entries(data.links).map(([size, [{ src, type }]]) => ({
-        src,
-        size,
-        type
-      }))
-    );
+  return [{ src: gviLink, size: 720, type }];
 };
 
 module.exports = {
